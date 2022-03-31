@@ -1,8 +1,7 @@
-from typing import Iterable, Sequence, List
 from ordinal_election import OrdinalElection, OrdinalBallot
+from typing import Union, List
 
-
-def k_borda(voting: OrdinalElection, size_of_committee: int, number_of_scored_candidates: int) -> OrdinalBallot:
+def k_borda(voting: Union[OrdinalElection, List[int]], size_of_committee: int, number_of_scored_candidates: int) -> OrdinalBallot:
     """Function computes a committee of given size using k-borda rule for specified number of scored candidates.
     In this version for multiple results only arbitrary one is returned.
 
@@ -18,6 +17,9 @@ def k_borda(voting: OrdinalElection, size_of_committee: int, number_of_scored_ca
     Returns:
         OrdinalBallot: List of chosen candidates wrapped in ordinalBallot
     """
+    
+    if not isinstance(voting, OrdinalElection): 
+        voting=OrdinalElection(voting)
     
     n = voting.ballot_size
     results = [0] * n
@@ -35,8 +37,8 @@ def k_borda(voting: OrdinalElection, size_of_committee: int, number_of_scored_ca
 
 
 if __name__ == '__main__':
-    print(k_borda(OrdinalElection([
+    print(k_borda([
         [0,1,2,3],
         [3,2,1,0],
         [2,1,3,0]
-    ]), 2, 3))
+    ], 2, 3))
