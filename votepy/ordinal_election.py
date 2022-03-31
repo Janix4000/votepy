@@ -33,6 +33,8 @@ class OrdinalElection(list):
                 if candidate not in self.candidates:
                     raise ValueError(f"Candidate sets in preference orders differ: candidate {candidate} is not present in every preference order")
             self.append(OrdinalBallot(preference, mapping))
+        self.ballot_size = len(preference_orders[0])
+        self.number_of_votes = len(preference_orders)
             
     def update_mapping(self, mapping: Sequence) -> None:
         self.mapping = mapping
