@@ -18,7 +18,7 @@ setuptools.setup(
     version=read_version(),
     author="Jan Izydorczyk, Filip Nikolow, Mateusz Słuszniak",
     author_email="unexpected@sent.at",
-    description="A Python library of ordinal-based committee (OBC) rules",
+    description="A Python library of ordinal-based committee (OBC) voting rules",
     long_description=read_readme(),
     long_description_content_type="text/markdown",
     url="https://github.com/Janix4000/votepy/",
