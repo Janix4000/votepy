@@ -7,11 +7,16 @@ class OrdinalBallot(list):
         
         self.mapping = mapping
         
+        length = len(self)
+        
         for candidate in self:
             if not isinstance(candidate, (int,)):
-                raise TypeError(f"Only integer candidates are allowed, object of type {str(type(candidate))} is not supported")
-            if candidate < 0:
-                raise ValueError(f"Only non-negative integers are valid candidates, value {candidate} was supplied")
+                raise TypeError(f"Candidates have to be of integer type, objects of type {str(type(candidate))} are not supported")
+            if candidate < 0 or candidate >= length:
+                raise ValueError(f"The candidates must be from the range [0, <ordering_length>-1]. Found {candidate}")
+        
+        if length != len(set(self)):
+            raise ValueError(f"All candidates inside the ordering must be unique integers")
             
     def __str__(self) -> str:
         if self.mapping is not None:
@@ -28,11 +33,9 @@ class OrdinalElection(list):
         self.candidates = set() if preference_orders else set(preference_orders[0])
         
         for preference in preference_orders:
+            preference = list(preference)
             if len(self.candidates) != len(preference):
-                raise ValueError(f"Preference orders are of different lengths")
-            for candidate in preference:
-                if candidate not in self.candidates:
-                    raise ValueError(f"Candidate sets in preference orders differ: candidate {candidate} is not present in every preference order")
+                raise ValueError(f"Preference orders must be of the same lengths")
             self.append(OrdinalBallot(preference, mapping))
             
     def update_mapping(self, mapping: Sequence) -> None:
