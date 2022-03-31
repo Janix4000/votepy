@@ -1,13 +1,13 @@
-from typing import Iterable, Sequence
+from collections.abc import Iterable, Sequence
 
 
 class OrdinalBallot(list):
-    def __init__(self, ordering: Iterable, mapping=None):
+    def __init__(self, ordering: Iterable[int], mapping: Sequence=None):
         super().__init__(ordering)
         
         self.mapping = mapping
         
-        for candidate in ordering:
+        for candidate in self:
             if not isinstance(candidate, (int,)):
                 raise TypeError(f"Only integer candidates are allowed, object of type {str(type(candidate))} is not supported")
             if candidate < 0:
@@ -20,11 +20,12 @@ class OrdinalBallot(list):
     
     
 class OrdinalElection(list):
-    def __init__(self, preference_orders: list, mapping=None):
+    def __init__(self, preference_orders: Iterable[Iterable[int]], mapping: Sequence=None):
         super().__init__()
         
         self.mapping = mapping
-        self.candidates = set() if len(preference_orders) == 0 else set(preference_orders[0])
+        preference_orders = list(preference_orders)
+        self.candidates = set() if preference_orders else set(preference_orders[0])
         
         for preference in preference_orders:
             if len(self.candidates) != len(preference):
@@ -38,7 +39,7 @@ class OrdinalElection(list):
         self.mapping = mapping
         
     def __str__(self) -> str:
-        return "\n".join(map(lambda x: str(x), self))
+        return "\n".join(map(str, self))
         
         
 if __name__ == '__main__':
