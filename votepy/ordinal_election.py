@@ -37,6 +37,8 @@ class OrdinalElection(list):
             if len(self.candidates) != len(preference):
                 raise ValueError(f"Preference orders must be of the same lengths")
             self.append(OrdinalBallot(preference, mapping))
+        self.ballot_size = len(preference_orders[0])
+        self.number_of_voters = len(preference_orders)
             
     def update_mapping(self, mapping: Sequence) -> None:
         self.mapping = mapping
