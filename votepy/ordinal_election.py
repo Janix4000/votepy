@@ -30,7 +30,7 @@ class OrdinalElection(list):
         
         self.mapping = mapping
         preference_orders = list(preference_orders)
-        self.candidates = set() if preference_orders else set(preference_orders[0])
+        self.candidates = set() if not preference_orders else set(preference_orders[0])
         
         for preference in preference_orders:
             preference = list(preference)
