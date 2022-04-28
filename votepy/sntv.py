@@ -15,7 +15,7 @@ def sntv(voting: Union[OrdinalElection, list[int]], size_of_committee: int) -> l
         ValueError: Number of candidates scored in SNTV is a positive number which do not exceeds number of all candidates
 
     Returns:
-        OrdinalBallot: List of chosen candidates wrapped in ordinalBallot
+        list[int]: List of chosen candidates
     """
     
     if not isinstance(voting, OrdinalElection): 
