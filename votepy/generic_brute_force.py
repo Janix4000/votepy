@@ -22,4 +22,4 @@ def brute_force(voting: OrdinalElection, size_of_committee: int, scoring_functio
         if score > best_score:
             best_score = score
             best_committee = committee
-    return best_committee
+    return list(best_committee)
