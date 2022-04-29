@@ -19,7 +19,7 @@ def chamberlin_courant_brute_force(voting: Union[OrdinalElection, list[int]], si
         for vote in voting:
             for i, candidate in enumerate(vote):
                 if candidate in committee:
-                    score += max(number_of_scored_candidates - i, 0)   # should it be 0 when outside the number of scored candidates?
+                    score += max(number_of_scored_candidates - i, 0)
                     break
         return score
         
