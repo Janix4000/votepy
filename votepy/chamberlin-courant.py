@@ -1,5 +1,5 @@
 from ordinal_election import OrdinalElection
-from typing import Union, Iterable, List
+from typing import Union, Iterable
 from generic_brute_force import brute_force
 from generic_greed import greedy
 
