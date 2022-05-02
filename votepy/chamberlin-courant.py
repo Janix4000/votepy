@@ -30,8 +30,8 @@ def chamberlin_courant_brute_force(voting: Union[OrdinalElection, list[int]], si
     if size_of_committee > n or size_of_committee <= 0:
         raise ValueError(f"Size of committee needs to be from the range 1 to the number of all candidates.")
 
-    return brute_force(voting, size_of_committee,
-                       lambda committee, voting: scoring_function(committee, voting, number_of_scored_candidates))
+    return brute_force(voting, size_of_committee, lambda committee, voting: scoring_function(committee,
+                                                                                             voting, number_of_scored_candidates))
 
 
 def chamberlin_courant_greedy(voting: Union[OrdinalElection, List[int]], size_of_committee: int,
