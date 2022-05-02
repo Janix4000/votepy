@@ -4,8 +4,7 @@ from generic_brute_force import brute_force
 from generic_greed import greedy
 
 
-def chamberlin_courant_brute_force(voting: Union[OrdinalElection, list[int]], size_of_committee: int,
-                                   number_of_scored_candidates: int) -> list[int]:
+def chamberlin_courant_brute_force(voting: Union[OrdinalElection, list[int]], size_of_committee: int, number_of_scored_candidates: int) -> list[int]:
     """Brute force implementation of the chamberlin-courant rule
     Args:
         voting (Union[OrdinalElection, list[int]]): Voting for which the function calculates the committee
@@ -14,7 +13,6 @@ def chamberlin_courant_brute_force(voting: Union[OrdinalElection, list[int]], si
     Returns:
         list[int]: List of chosen candidates
     """
-
     def scoring_function(committee: Iterable[int], voting: OrdinalElection, number_of_scored_candidates: int):
         committee = set(committee)
         score = 0
