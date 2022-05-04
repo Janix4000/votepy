@@ -12,9 +12,10 @@ class Rule:
     scoring_function: Callable
     
 @dataclass
-class Strategy:
+class Algorithm:
     name: str
     shortname: str
     longname: str
     algorithm: Callable
-    
+
+

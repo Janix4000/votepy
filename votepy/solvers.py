@@ -3,6 +3,6 @@ from typing import Union, Iterable
 
 def solve(voting: Union[OrdinalElection, Iterable[int]], 
     rule: str, 
-    strategy: str, 
+    algorithm: str, 
     **rule_kwargs) -> list[int]: 
     return None
