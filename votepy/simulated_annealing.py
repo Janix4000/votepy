@@ -19,14 +19,15 @@ def default_prob(temp: int, initial_temp: int, p: float=0.02, q: float=0.999) ->
     
 
 
-def simulated_annealing(voting: OrdinalElection, size_of_committee: int, scoring_function: Callable[[Iterable[int], OrdinalElection], int], initial_temp: int, temp_prob: Callable[[int, int, dict], float] = default_prob, **temp_kwargs) -> list[int]:
+def simulated_annealing(voting: OrdinalElection, size_of_committee: int, scoring_function: Callable[[Iterable[int], OrdinalElection], int], 
+                        initial_temp: int=2000, temp_prob: Callable[[int, int, dict], float] = default_prob, **temp_kwargs) -> list[int]:
     """A simulated annealing algorithm that calculates the winning committee using a given scoring function
 
     Args:
         voting (OrdinalElection): Voting for which the function calculates the committee
         size_of_committee (int): Size of the committee
         scoring_function (Callable[[Iterable[int], OrdinalElection], int]): The scoring function used to determine the best committee. It should take the committee and election as parameters and return the score of that committee.
-        initial_temp (int): Number of iterations
+        initial_temp (int): Number of iterations of the algorithm. Defaults to 2000.
         temp_prob: (Callable[[int, int, dict], float]): The probability that worse result is chosen. It is function of current temperature, initial temperature and additional **temp_kwargs.
         **temp_kwargs: Additional temp_prob arguments.
     Returns:
