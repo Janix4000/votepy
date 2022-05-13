@@ -20,10 +20,9 @@ def banzhaf_naive_impl(voting: OrdinalElection, size_of_committee: int,
     
     def banzhaf_scoring_function(w, voting, c):
         
-        def banzhaf_scoring_function_vote(w, vote, c):
+        def banzhaf_scoring_function_vote(w, vote, candidate, m, k):
             
-            def c_size(pos_d, t, w_a, w_b):
-                m = len(voting)
+            def c_size(pos_d, t, m, k, w_a, w_b):
                 k = size_of_committee
                 if t > w_a:
                     return comb(pos_d - 1 - w_a, t - 1 - w_a) * comb(m - pos_d - w_b, t - k - w_b)
@@ -37,36 +36,40 @@ def banzhaf_naive_impl(voting: OrdinalElection, size_of_committee: int,
                         w_a += 1
                 return w_a, len(w) - w_a
             
-            def c_sum(pos_d, w):
+            def c_sum(pos_d, w, m, k):
                 s = 0
                 k = size_of_committee
                 w_a, w_b = get_w_a_b(w, d)
                 for t in range(1, k + 1):
-                    s += c_size(pos_d, t, w_a, w_b)
+                    s += c_size(pos_d, t, m, k, w_a, w_b)
                     
-            def delta(d):
+            def delta(d, m, k, w):
                 pos_d = vote.pos(d)
-                s = c_sum(pos_d, w)
+                s = c_sum(pos_d, w, m, k)
                 k = size_of_committee
                 return (scoring_function(pos_d, k) - scoring_function(pos_d, k - 1)) * s
             
-            def delta_prime(c):
+            def delta_prime(c, m, k, w):
                 pos_c = vote.pos(c)
-                s = c_sum(pos_c, w)
-                k = size_of_committee
+                s = c_sum(pos_c, w, m, k)
                 return scoring_function(pos_c, k) * s
             
-            res = delta_prime(c)
+            
+            
+            
+            res = delta_prime(candidate, m, k, w)
             for d in range(len(voting)):
-                if d == c:
+                if d == candidate:
                     continue
-                res += delta(d)
+                res += delta(d, m, k, w)
 
             return res
         
         res = 0
+        k = size_of_committee
+        m = voting.ballot_size
         for vote in voting:
-            res += banzhaf_scoring_function_vote(w, vote, c)
+            res += banzhaf_scoring_function_vote(w, vote, c, m, k)
         return res
     
     
