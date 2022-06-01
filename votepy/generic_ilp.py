@@ -7,7 +7,7 @@ class Solver(ABC):
         MAX = 1
         MIN = 2
     @abstractmethod
-    def addVariable(self, name: str, obj: float, lb: float, ub: float, vartype: str):
+    def addVariable(self, name: str, vartype: str, obj: Optional[float], lb: Optional[float], ub: Optional[float]):
         pass
 
     @abstractmethod
@@ -43,18 +43,25 @@ class CPLEX(Solver):
         self.senses = []
         self.rows = []
 
+        self.cplex = cplex
         self.model = cplex.Cplex()
+        self.model.set_log_stream(None)
+        self.model.set_results_stream(None)
+
+
         if sense == Solver.Sense.MAX:
             self.model.objective.set_sense(self.model.objective.sense.maximize)
         elif sense == Solver.Sense.MIN:
             self.model.objective.set_sense(self.model.objective.sense.minimize)
 
 
-    def addVariable(self, name: str, obj: float, lb: float, ub: float, vartype: str):
+    def addVariable(self, name: str, vartype: str, obj: Optional[float] = None, lb: Optional[float] = None, ub: Optional[float] = None):
         self.colnames.append(name)
         self.obj.append(obj)
-        self.lb.append(lb)
-        self.ub.append(ub)
+        if lb is not None:
+            self.lb.append(lb)
+        if ub is not None:
+            self.ub.append(ub)
         self.ctypes.append(vartype)
         return name
 
@@ -65,7 +72,12 @@ class CPLEX(Solver):
         self.senses.append(sense)
 
     def solve(self):
-        self.model.variables.add(obj=self.obj, lb=self.lb, ub=self.ub, types=''.join(self.ctypes), names=self.colnames)
+        if len(self.lb) != len(self.ctypes) or len(self.ub) != len(self.ctypes):
+            if len(self.lb) > 0 or len(self.ub) > 0:
+                print("Warning: You've given bounds for some variables but not for all - please make sure you either set bounds for every variable or for none.\nUsing default bounds...")
+            self.model.variables.add(obj=self.obj, types=''.join(self.ctypes), names=self.colnames)
+        else:
+            self.model.variables.add(obj=self.obj, lb=self.lb, ub=self.ub, types=''.join(self.ctypes), names=self.colnames)
         self.model.linear_constraints.add(lin_expr=self.rows, senses=''.join(self.senses), rhs=self.rhs, names=self.rownames)
         self.model.solve()
 
@@ -83,7 +95,13 @@ class Gurobi(Solver):
             print("[Error]: Failed to import {}".format(err.args[0]))
             exit(1)
 
-        self.model = gp.Model()
+        # TODO
+        # forcefully disabling Gurobi logs for now, can be replaced by config file later
+        env = gp.Env(empty=True)
+        env.setParam('OutputFlag', 0)
+        env.start()
+        
+        self.model = gp.Model(env=env)
         self.vartypemap = {
             'C': GRB.CONTINUOUS,
             'B': GRB.BINARY,
@@ -91,6 +109,10 @@ class Gurobi(Solver):
         }
 
         self.objective = []
+        if sense == Solver.Sense.MAX:
+            self.sense = GRB.MAXIMIZE
+        elif sense == Solver.Sense.MIN:
+            self.sense = GRB.MINIMIZE
 
     def addVariable(self, name: str, vartype: str, obj: Optional[float] = None, lb: Optional[float] = None, ub: Optional[float] = None):
         var = self.model.addVar(vtype=self.vartypemap[vartype], name=name)
@@ -112,6 +134,7 @@ class Gurobi(Solver):
             self.model.addConstr(expr == rhs, name)
 
     def solve(self):
+        self.model.setObjective(sum(self.objective), self.sense)
         self.model.optimize()
 
     def getValues(self):
