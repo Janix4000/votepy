@@ -120,6 +120,59 @@ def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[int]], size_of_co
                 if v.X == 1:
                     best_committee.append(i)
             return best_committee
+        
+        
+def chamberlin_courant_ilp_custom(voting: Union[OrdinalElection, list[int]], size_of_committee: int,
+                              number_of_scored_candidates: int) -> list[int]:
+    """Custom implementation of the chamberlin courant rule.
+
+    Args:
+        voting (Union[OrdinalElection, list[int]]): Voting for which the function calculates the committee
+        size_of_committee (int): Size of the committee
+        number_of_scored_candidates (int): Number of scored candidartes using k-borda rule
+    Returns:
+        list[int]: List of chosen candidates
+    """
+    try:
+        import gurobipy as gp
+        from gurobipy import GRB
+    except ImportError as err:
+        print("[Error]: Failed to import {}.".format(err.args[0]))
+        exit(1)
+        
+    if not isinstance(voting, OrdinalElection):
+        voting = OrdinalElection(voting)
+        
+    with gp.Env(empty=True) as env:
+        env.setParam('OutputFlag', 0)
+        env.start()
+        with gp.Model(env=env) as model:
+            x = []
+            for i in range(voting.ballot_size):
+                x.append(model.addVar(vtype=GRB.BINARY, name=f"x_{i}"))
+                
+            y = []
+            for i in range(voting.number_of_voters):
+                y.append([])
+                for j in range(voting.ballot_size):
+                    y[-1].append(model.addVar(vtype=GRB.BINARY, name=f"y_{i}_{j}"))            
+                
+            model.setObjective(sum([(voting.ballot_size - w)*y[i][j] for i,votes in enumerate(voting) for w,j in enumerate(votes)]), GRB.MAXIMIZE)
+            
+            model.addConstr(sum(x) == size_of_committee)
+            
+            for i in range(voting.number_of_voters):
+                model.addConstr(sum(y[i]) == 1)
+                for j in range(voting.ballot_size):
+                    model.addConstr(x[j] >= y[i][j])
+                    
+            model.optimize()
+
+            best_committee = []
+            for i,v in enumerate(model.getVars()[:voting.ballot_size]):
+                if v.X == 1:
+                    best_committee.append(i)
+            return best_committee
     
     
     
@@ -159,8 +212,16 @@ if __name__ == '__main__':
         )
     )
     print(
-        "ILP:",
+        "ILP article:",
         chamberlin_courant_ilp(
+            election,
+            2,
+            5
+        )
+    )
+    print(
+        "ILP custom:",
+        chamberlin_courant_ilp_custom(
             election,
             2,
             5
