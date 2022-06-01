@@ -55,7 +55,7 @@ class CPLEX(Solver):
             self.model.objective.set_sense(self.model.objective.sense.minimize)
 
 
-    def addVariable(self, name: str, vartype: str, obj: Optional[float] = None, lb: Optional[float] = None, ub: Optional[float] = None):
+    def addVariable(self, name: str, vartype: str, obj: float = 0.0, lb: Optional[float] = None, ub: Optional[float] = None):
         self.colnames.append(name)
         self.obj.append(obj)
         if lb is not None:
@@ -100,7 +100,7 @@ class Gurobi(Solver):
         env = gp.Env(empty=True)
         env.setParam('OutputFlag', 0)
         env.start()
-        
+
         self.model = gp.Model(env=env)
         self.vartypemap = {
             'C': GRB.CONTINUOUS,
