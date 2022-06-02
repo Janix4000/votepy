@@ -2,79 +2,8 @@ import itertools
 from ordinal_election import OrdinalElection
 from typing import Callable, Iterable, Union
 
-from generic_greed import greedy
 from math import comb
-
-
-def banzhaf_naive_impl(voting: OrdinalElection, size_of_committee: int,
-           scoring_function: Callable[[int, int], int]) -> list[int]:
-    """A generic greedy algorithm that calculates the winning committee using a given scoring function
-    Args:
-        voting (OrdinalElection): Voting for which the function calculates the committee
-        size_of_committee (int): Size of the committee
-        scoring_function (Callable[[int, int], int]): The single-winner scoring function. It should take the position of the candidate and size of the committee and return the single score of that candidate. Scoring function of the committee must be expressed as ∑γ(pos(voter)).
-
-    Returns:
-        list[int]: The winning committee
-    """
-    
-    
-    def banzhaf_scoring_function(w, voting, c):
-        
-        def banzhaf_scoring_function_vote(w, vote, candidate, m, k):
-            
-            def c_size(pos_d, t, m, k, w_a, w_b):
-                k = size_of_committee
-                if t > w_a:
-                    return comb(pos_d - 1 - w_a, t - 1 - w_a) * comb(m - pos_d - w_b, t - k - w_b)
-                else:
-                    return 0
-            
-            def get_w_a_b(w, d):
-                w_a = 0
-                for c in w:
-                    if vote.pos(c) < d:
-                        w_a += 1
-                return w_a, len(w) - w_a
-            
-            def c_sum(pos_d, w, m, k):
-                s = 0
-                k = size_of_committee
-                w_a, w_b = get_w_a_b(w, d)
-                for t in range(1, k + 1):
-                    s += c_size(pos_d, t, m, k, w_a, w_b)
-                    
-            def delta(d, m, k, w):
-                pos_d = vote.pos(d)
-                s = c_sum(pos_d, w, m, k)
-                k = size_of_committee
-                return (scoring_function(pos_d, k) - scoring_function(pos_d, k - 1)) * s
-            
-            def delta_prime(c, m, k, w):
-                pos_c = vote.pos(c)
-                s = c_sum(pos_c, w, m, k)
-                return scoring_function(pos_c, k) * s
-            
-            
-            
-            
-            res = delta_prime(candidate, m, k, w)
-            for d in range(len(voting)):
-                if d == candidate:
-                    continue
-                res += delta(d, m, k, w)
-
-            return res
-        
-        res = 0
-        k = size_of_committee
-        m = voting.ballot_size
-        for vote in voting:
-            res += banzhaf_scoring_function_vote(w, vote, c, m, k)
-        return res
-    
-    
-    return greedy(voting, size_of_committee, banzhaf_scoring_function)
+from collections import defaultdict
 
 PosScoringFunction = Callable[[int], float]
 
@@ -106,5 +35,101 @@ def banzhaf(voting: OrdinalElection, size_of_committee: int,
     
     gammas = lambda t, k: lambda pos: lambdas[t] * scoring_functions[k](pos) 
     
+    m_candidates = voting.ballot_size
+    k_committee = size_of_committee
     
+    voters_ws_less = [[0] * m_candidates for _ in range(voting.number_of_voters)]
+    voters_ws_greater = [[0] * m_candidates for _ in range(voting.number_of_voters)]
     
+    combinations = defaultdict(lambda t: comb(*t))
+    
+    def delta_wave(candidate, voter, ws_less, ws_greater):
+        candidate_pos = voter.pos(candidate)
+        w_less, w_greater = ws_less[candidate], ws_greater[candidate]
+        
+        t_min = w_less + 1
+        t_max = min(len(lambdas) - 1, k_committee - 2 - w_greater)
+        
+        
+        l_up = candidate_pos - 1 - w_less
+        l_down = -1 - w_less
+        r_up = m_candidates - candidate_pos - 1 - w_greater
+        r_down = k_committee - 1 - w_greater
+        
+        if any(p <= 0 for p in (l_up, l_down, r_up, r_down)):
+            return 0
+        
+        c_size = combinations[(l_up, t_min + 1 + l_down )] * combinations[(r_up, r_down - t_min - 1 )]
+        
+        score = 0
+        
+        for t in range(t_min + 1, t_max + 1):
+            score += c_size * gammas(t, 1)(candidate_pos)
+            c_size = c_size / (t + l_down + 1) * (t + l_down)
+            # c_size = c_size // (t + l_down + 1) * (t + l_down)
+        return score
+    
+    def delta(other, candidate, voter, ws_less, ws_greater):
+        other_pos, candidate_pos = voter.pos(other), voter.pos(candidate)
+        w_less, w_greater = ws_less[other], ws_greater[other]
+        r_d = int(other_pos < candidate_pos)
+        
+        t_min = w_less + 1
+        t_max = min(len(lambdas) - 1, k_committee - 2 - w_greater)
+        
+        
+        l_up = other_pos - 1 - w_less
+        l_down = -1 - w_less
+        r_up = m_candidates - other_pos - 1 - w_greater
+        r_down = k_committee - 1 - w_greater
+        
+        if any(p <= 0 for p in (l_up, l_down, r_up, r_down)):
+            return 0
+        
+        c_size = combinations[(l_up, t_min + 1 + l_down )] * combinations[(r_up, r_down - t_min - 1 )]
+        
+        score = 0
+        
+        for t in range(t_min + 1, t_max + 1):
+            score += c_size * (gammas(t, 1)(other_pos) - gammas(t + r_d, 0)(other_pos))
+            c_size = c_size / (t + l_down + 1) * (t + l_down)
+            # c_size = c_size // (t + l_down + 1) * (t + l_down)
+        return score
+    
+    def banzhaf_scoring_function(candidate):
+        score = 0
+        for voter, ws_less, ws_greater in zip(voting, voters_ws_less, voters_ws_greater):
+            score += delta_wave(candidate, ws_less, ws_greater) + sum(delta(voter.pos(other), candidate, ws_less, ws_greater) for other in range(m_candidates) if other != candidate)
+    
+    def update_ws(current_best_candidate):
+        for voter, ws_less, ws_greater in zip(voting, voters_ws_less, voters_ws_greater):
+            current_best_candidate_pos = voter.pos(current_best_candidate)
+            for candidate in range(voting.ballot_size):
+                if candidate == current_best_candidate:
+                    continue
+                candidate_pos = voter.pos(candidate)
+                if current_best_candidate_pos < candidate_pos:
+                    ws_less[candidate] += 1
+                    ws_greater[candidate] -= 1
+                else:
+                    ws_less[candidate] -= 1
+                    ws_greater[candidate] += 1
+    
+    w_resultant_committee = []
+    best_score = 0
+    remaining_candidates = set(i for i in range(voting.ballot_size))
+    for _ in range(size_of_committee):
+        current_best_candidate, current_best_score = -1, best_score
+        for candidate in remaining_candidates:
+            score = banzhaf_scoring_function(candidate)
+            if score > current_best_score:
+                current_best_candidate = candidate
+                current_best_score = score
+        remaining_candidates.remove(current_best_candidate)
+        w_resultant_committee.append(current_best_candidate)
+        
+        update_ws(current_best_candidate)
+                    
+        best_score = current_best_score
+
+    return w_resultant_committee
