@@ -1,5 +1,6 @@
+import itertools
 from ordinal_election import OrdinalElection
-from typing import Callable, Iterable
+from typing import Callable, Iterable, Union
 
 from generic_greed import greedy
 from math import comb
@@ -75,3 +76,35 @@ def banzhaf_naive_impl(voting: OrdinalElection, size_of_committee: int,
     
     return greedy(voting, size_of_committee, banzhaf_scoring_function)
 
+PosScoringFunction = Callable[[int], float]
+
+
+def is_strictly_decreasing_sequence(sequence):
+    first, second = itertools.tee(sequence)
+    next(second)
+    return all(earlier > later for earlier, later in zip(first, second))
+
+def all_nonnegative(sequence):
+    return all(x >= 0 for x in sequence)
+
+def banzhaf(voting: OrdinalElection, size_of_committee: int, 
+            scoring_functions: Union[PosScoringFunction, tuple[PosScoringFunction, PosScoringFunction]],
+            lambdas: list[float]=None
+            ):
+    lambdas = list(lambdas) if lambdas is not None else [1] * size_of_committee
+    if not is_strictly_decreasing_sequence(lambdas):
+        raise ValueError('lambdas parameter must be strictly decreasing sequence!')
+    if not all_nonnegative(lambdas):
+        raise ValueError('lambdas parameter must contain only non-negative elements!')
+    lambdas = lambdas + [0]
+    
+    if isinstance(scoring_functions, Callable):
+        scoring_functions = (scoring_functions, scoring_functions)
+    elif not isinstance(scoring_functions, tuple) or len(scoring_functions) < 2:
+        raise ValueError('scoring_functions must be a function or tuple of two functions!')    
+     
+    
+    gammas = lambda t, k: lambda pos: lambdas[t] * scoring_functions[k](pos) 
+    
+    
+    
