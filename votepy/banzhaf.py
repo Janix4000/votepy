@@ -8,10 +8,10 @@ from collections import defaultdict
 PosScoringFunction = Callable[[int], float]
 
 
-def is_strictly_decreasing_sequence(sequence):
+def is_not_strictly_decreasing_sequence(sequence):
     first, second = itertools.tee(sequence)
     next(second)
-    return all(earlier > later for earlier, later in zip(first, second))
+    return all(earlier >= later for earlier, later in zip(first, second))
 
 def all_nonnegative(sequence):
     return all(x >= 0 for x in sequence)
@@ -19,10 +19,29 @@ def all_nonnegative(sequence):
 def banzhaf(voting: OrdinalElection, size_of_committee: int, 
             scoring_functions: Union[PosScoringFunction, tuple[PosScoringFunction, PosScoringFunction]],
             lambdas: list[float]=None
-            ):
+            ) -> list[int]:
+    
+    """Banzhaf algorithm approximating rules with scoring rules of form f_{m, k}(i_1, ..., i_k) = Σ_{t=1}^k f_{m, k}^t(i_t), where functions f_{m. k}^t are in the form g_{m, k} * λ_t. Algorithm requires implementation of g_{m, k} and g_{m, k-1} (where m is number of candidates, k if a size of committee).
+    
+    Args:
+        voting (OrdinalElection): Voting for which the function calculates the committee
+        size_of_committee (int): Size of the committee
+        scoring_functions (pos: int -> score: float, (pos: int -> score: float, pos: int -> score: float)): Pair of g_{m, k} and g_{m, k-1} functions. If both of them are the same, one function can be passed as the argument.
+        lambdas (list[float]): Sequence of λ_t. If sequence is shorter than k (size of committee), it is filled with trailing zeros. Sequence must be decreasing and contains non-negative values.
+
+    Raises:
+        ValueError: Lambdas parameter must be decreasing sequence.
+        ValueError: Lambdas parameter must contain only non-negative elements.
+        ValueError: Scoring functions must be a function or tuple of two functions.
+
+    Returns:
+        list[int]: The winning committee
+    """
+    
+    
     lambdas = list(lambdas) if lambdas is not None else [1] * size_of_committee
-    if not is_strictly_decreasing_sequence(lambdas):
-        raise ValueError('lambdas parameter must be strictly decreasing sequence!')
+    if not is_not_strictly_decreasing_sequence(lambdas):
+        raise ValueError('lambdas parameter must be decreasing sequence!')
     if not all_nonnegative(lambdas):
         raise ValueError('lambdas parameter must contain only non-negative elements!')
     lambdas = lambdas + [0]
