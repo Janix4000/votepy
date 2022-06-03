@@ -21,7 +21,7 @@ def banzhaf(voting: OrdinalElection, size_of_committee: int,
             lambdas: list[float]=None
             ) -> list[int]:
     
-    """Banzhaf algorithm approximating rules with scoring rules of form f_{m, k}(i_1, ..., i_k) = Σ_{t=1}^k f_{m, k}^t(i_t), where functions f_{m. k}^t are in the form g_{m, k} * λ_t. Algorithm requires implementation of g_{m, k} and g_{m, k-1} (where m is number of candidates, k if a size of committee).
+    """Banzhaf algorithm approximating rules with scoring rules of form γ_{m, k}(i_1, ..., i_k) = Σ_{t=1}^k γ_{m, k}^t(i_t), where functions γ_{m. k}^t are in the form g_{m, k} * λ_t. Algorithm requires implementation of g_{m, k} and g_{m, k-1} (where m is number of candidates, k if a size of committee).
     
     Args:
         voting (OrdinalElection): Voting for which the function calculates the committee
