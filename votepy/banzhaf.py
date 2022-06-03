@@ -21,12 +21,12 @@ def banzhaf(voting: OrdinalElection, size_of_committee: int,
             lambdas: list[float]=None
             ) -> list[int]:
     
-    """Banzhaf algorithm approximating rules with scoring rules of form γ_{m, k}(i_1, ..., i_k) = Σ_{t=1}^k γ_{m, k}^t(i_t), where functions γ_{m. k}^t are in the form g_{m, k} * λ_t. Algorithm requires implementation of g_{m, k} and g_{m, k-1} (where m is number of candidates, k if a size of committee).
+    """Banzhaf algorithm approximating rules with scoring rules of form γ_{m, k}(i_1, ..., i_k) = Σ_{t=1}^k γ_{m, k}^t(i_t), where functions γ_{m. k}^t are in the form g_{m, k} * λ_t. Algorithm requires implementation of g_{m, k-1} and g_{m, k} (where m is number of candidates, k if a size of committee).
     
     Args:
         voting (OrdinalElection): Voting for which the function calculates the committee
         size_of_committee (int): Size of the committee
-        scoring_functions (pos: int -> score: float, (pos: int -> score: float, pos: int -> score: float)): Pair of g_{m, k} and g_{m, k-1} functions. If both of them are the same, one function can be passed as the argument.
+        scoring_functions (pos: int -> score: float, (pos: int -> score: float, pos: int -> score: float)): Pair of g_{m, k-1} and g_{m, k} functions. If both of them are the same, one function can be passed as the argument.
         lambdas (list[float]): Sequence of λ_t. If sequence is shorter than k (size of committee), it is filled with trailing zeros. Sequence must be decreasing and contains non-negative values.
 
     Raises:
