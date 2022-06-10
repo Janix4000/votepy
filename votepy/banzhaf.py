@@ -17,16 +17,16 @@ def all_nonnegative(sequence):
     return all(x >= 0 for x in sequence)
 
 def banzhaf(voting: OrdinalElection, size_of_committee: int, 
-            scoring_functions: Union[PosScoringFunction, tuple[PosScoringFunction, PosScoringFunction]],
+            pos_scoring_function: PosScoringFunction,
             lambdas: list[float]=None
             ) -> list[int]:
     
-    """Banzhaf algorithm approximating rules with scoring rules of form γ_{m, k}(i_1, ..., i_k) = Σ_{t=1}^k γ_{m, k}^t(i_t), where functions γ_{m. k}^t are in the form g_{m, k} * λ_t. Algorithm requires implementation of g_{m, k-1} and g_{m, k} (where m is number of candidates, k if a size of committee).
+    """Banzhaf algorithm approximating rules with scoring rules of form γ_{m, k}(i_1, ..., i_k) = Σ_{t=1}^k γ_{m, k}^t(i_t), where functions γ_{m, k}^t are in the form g_{m, k} * λ_t. 
     
     Args:
         voting (OrdinalElection): Voting for which the function calculates the committee
         size_of_committee (int): Size of the committee
-        scoring_functions (pos: int -> score: float, (pos: int -> score: float, pos: int -> score: float)): Pair of g_{m, k-1} and g_{m, k} functions. If both of them are the same, one function can be passed as the argument.
+        pos_scoring_function (pos: int -> score: float): A g_{m, k} function. It must take one argument: position of the candidate (non-negative integer) and returns their score.
         lambdas (list[float]): Sequence of λ_t. If sequence is shorter than k (size of committee), it is filled with trailing zeros. Sequence must be decreasing and contains non-negative values.
 
     Raises:
@@ -46,13 +46,11 @@ def banzhaf(voting: OrdinalElection, size_of_committee: int,
         raise ValueError('lambdas parameter must contain only non-negative elements!')
     lambdas = lambdas + [0]
     
-    if isinstance(scoring_functions, Callable):
-        scoring_functions = (scoring_functions, scoring_functions)
-    elif not isinstance(scoring_functions, tuple) or len(scoring_functions) < 2:
-        raise ValueError('scoring_functions must be a function or tuple of two functions!')    
+    if not isinstance(pos_scoring_function, Callable):
+        raise ValueError('scoring_functions must be a function!')
      
     
-    gammas = lambda t, k: lambda pos: lambdas[t] * scoring_functions[k](pos) 
+    gammas = lambda t: lambda pos: lambdas[t] * pos_scoring_function(pos) 
     
     m_candidates = voting.ballot_size
     k_committee = size_of_committee
@@ -83,7 +81,7 @@ def banzhaf(voting: OrdinalElection, size_of_committee: int,
         score = 0
         
         for t in range(t_min + 1, t_max + 1):
-            score += c_size * gammas(t, 1)(candidate_pos)
+            score += c_size * gammas(t)(candidate_pos)
             c_size = c_size / (t + l_down + 1) * (t + l_down)
             # c_size = c_size // (t + l_down + 1) * (t + l_down)
         return score
@@ -110,7 +108,7 @@ def banzhaf(voting: OrdinalElection, size_of_committee: int,
         score = 0
         
         for t in range(t_min + 1, t_max + 1):
-            score += c_size * (gammas(t, 1)(other_pos) - gammas(t + r_d, 0)(other_pos))
+            score += c_size * (gammas(t)(other_pos) - gammas(t + r_d)(other_pos))
             c_size = c_size / (t + l_down + 1) * (t + l_down)
             # c_size = c_size // (t + l_down + 1) * (t + l_down)
         return score
