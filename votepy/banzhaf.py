@@ -65,7 +65,7 @@ def banzhaf(voting: OrdinalElection, size_of_committee: int,
         w_less, w_greater = ws_less[candidate], ws_greater[candidate]
         
         t_min = w_less + 1
-        t_max = min(len(lambdas) - 1, k_committee - 2 - w_greater)
+        t_max = min(len(lambdas) - 1, k_committee - 1 - w_greater)
         
         
         l_up = candidate_pos - 1 - w_less
@@ -76,7 +76,7 @@ def banzhaf(voting: OrdinalElection, size_of_committee: int,
         if any(p <= 0 for p in (l_up, l_down, r_up, r_down)):
             return 0
         
-        c_size = combinations[(l_up, t_min + 1 + l_down )] * combinations[(r_up, r_down - t_min - 1 )]
+        c_size = comb(l_up, t_min + l_down ) * comb(r_up, r_down - t_min)
         
         score = 0
         
@@ -92,7 +92,7 @@ def banzhaf(voting: OrdinalElection, size_of_committee: int,
         r_d = int(other_pos < candidate_pos)
         
         t_min = w_less + 1
-        t_max = min(len(lambdas) - 1, k_committee - 2 - w_greater)
+        t_max = min(len(lambdas) - 1, k_committee - 1 - w_greater)
         
         
         l_up = other_pos - 1 - w_less
@@ -103,7 +103,7 @@ def banzhaf(voting: OrdinalElection, size_of_committee: int,
         if any(p <= 0 for p in (l_up, r_up)):
             return 0
         
-        c_size = combinations[(l_up, t_min + 1 + l_down )] * combinations[(r_up, r_down - (t_min + 1) )]
+        c_size = comb(l_up, t_min + l_down ) * comb(r_up, r_down - t_min)
         
         score = 0
         
@@ -116,7 +116,14 @@ def banzhaf(voting: OrdinalElection, size_of_committee: int,
     def banzhaf_scoring_function(candidate):
         score = 0
         for voter, ws_less, ws_greater in zip(voting, voters_ws_less, voters_ws_greater):
-            score += delta_wave(candidate, ws_less, ws_greater) + sum(delta(voter.pos(other), candidate, ws_less, ws_greater) for other in range(m_candidates) if other != candidate)
+            score += (
+                delta_wave(candidate, voter, ws_less, ws_greater) 
+                + sum (
+                    delta(other, candidate, voter, ws_less, ws_greater) 
+                    for other in range(m_candidates) if other != candidate
+                )
+            )
+        return score
     
     def update_ws(current_best_candidate):
         for voter, ws_less, ws_greater in zip(voting, voters_ws_less, voters_ws_greater):
@@ -136,10 +143,10 @@ def banzhaf(voting: OrdinalElection, size_of_committee: int,
     best_score = 0
     remaining_candidates = set(i for i in range(voting.ballot_size))
     for _ in range(size_of_committee):
-        current_best_candidate, current_best_score = -1, best_score
+        current_best_candidate, current_best_score = -1, 0
         for candidate in remaining_candidates:
             score = banzhaf_scoring_function(candidate)
-            if score > current_best_score:
+            if score >= current_best_score:
                 current_best_candidate = candidate
                 current_best_score = score
         remaining_candidates.remove(current_best_candidate)
