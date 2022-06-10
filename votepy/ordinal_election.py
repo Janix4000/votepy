@@ -17,12 +17,28 @@ class OrdinalBallot(list):
         
         if length != len(set(self)):
             raise ValueError(f"All candidates inside the ordering must be unique integers")
+        
+        self.__pos = [None] * length
+        for i, d in enumerate(self):
+            self.__pos[d] = i
             
     def __str__(self) -> str:
         if self.mapping is not None:
             return str([self.mapping[candidate] for candidate in self])
         return str([self])
     
+    def pos(self, candidate: int) -> int:
+        """Returns position of the candidate in voting/preference in O(1) time.
+
+        Args:
+            candidate (int): Index of the candidate. Must be in range of [0, <ordering_length>-1].
+
+        Returns:
+            int: Position of the candidate.
+        """
+        if candidate < 0 or candidate >= len(self):
+                raise ValueError(f"The candidates must be from the range [0, <ordering_length>-1]. Found {candidate}")
+        return self.__pos[candidate]
     
 class OrdinalElection(list):
     def __init__(self, preference_orders: Iterable[Iterable[int]], mapping: Sequence=None):

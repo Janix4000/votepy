@@ -2,7 +2,7 @@ from ordinal_election import OrdinalElection
 from typing import Union, Iterable
 from generic_brute_force import brute_force
 from generic_greed import greedy
-
+from banzhaf import banzhaf
 
 def chamberlin_courant_brute_force(voting: Union[OrdinalElection, list[int]], size_of_committee: int, number_of_scored_candidates: int) -> list[int]:
     """Brute force implementation of the chamberlin-courant rule
@@ -34,13 +34,13 @@ def chamberlin_courant_brute_force(voting: Union[OrdinalElection, list[int]], si
                                                                                              voting, number_of_scored_candidates))
 
 
-def chamberlin_courant_greedy(voting: Union[OrdinalElection, List[int]], size_of_committee: int,
-                              number_of_scored_candidates: int) -> List[int]:
+def chamberlin_courant_greedy(voting: Union[OrdinalElection, list[int]], size_of_committee: int,
+                              number_of_scored_candidates: int) -> list[int]:
     """Greedy implementation of the chamberlin-courant rule
     Args:
         voting (Union[OrdinalElection, list[int]]): Voting for which the function calculates the committee
         size_of_committee (int): Size of the committee
-        number_of_scored_candidates (int): Number of scored candidartes using k-borda rule
+        number_of_scored_candidates (int): Number of scored candidates using k-borda rule
     Returns:
         list[int]: List of chosen candidates
     """
@@ -68,6 +68,39 @@ def chamberlin_courant_greedy(voting: Union[OrdinalElection, List[int]], size_of
                                                                         number_of_scored_candidates))
 
 
+def chamberlin_courant_banzhaf(voting: Union[OrdinalElection, list[int]], size_of_committee: int,
+                              number_of_scored_candidates: int) -> list[int]:
+    """Approximation of the chamberlin-courant rule using Banzhaf algorithm
+    Args:
+        voting (Union[OrdinalElection, list[int]]): Voting for which the function calculates the committee
+        size_of_committee (int): Size of the committee
+        number_of_scored_candidates (int): Number of scored candidates using k-borda rule
+    Returns:
+        list[int]: List of chosen candidates
+    """
+
+    if not isinstance(voting, OrdinalElection):
+        voting = OrdinalElection(voting)
+
+    n = voting.ballot_size
+    if size_of_committee > n or size_of_committee <= 0:
+        raise ValueError(f"Size of committee needs to be from the range 1 to the number of all candidates.")
+
+    def pos_scoring_function(pos: int):
+        nonlocal number_of_scored_candidates
+        m = number_of_scored_candidates - 1
+        return m - pos
+    
+    lambdas = [1]
+
+    return banzhaf(
+        voting, 
+        size_of_committee,
+        pos_scoring_function=pos_scoring_function,
+        lambdas=lambdas
+        )
+
+
 if __name__ == '__main__':
     election = OrdinalElection([
         [0, 1, 2, 3, 4],
@@ -93,6 +126,13 @@ if __name__ == '__main__':
     )
     print(
         chamberlin_courant_greedy(
+            election,
+            2,
+            5
+        )
+    )
+    print(
+        chamberlin_courant_banzhaf(
             election,
             2,
             5
