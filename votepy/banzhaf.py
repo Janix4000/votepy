@@ -102,10 +102,10 @@ def banzhaf(voting: OrdinalElection, size_of_committee: int,
         r_up = m_candidates - other_pos - 1 - w_greater
         r_down = k_committee - 1 - w_greater
         
-        if any(p <= 0 for p in (l_up, l_down, r_up, r_down)):
+        if any(p <= 0 for p in (l_up, r_up)):
             return 0
         
-        c_size = combinations[(l_up, t_min + 1 + l_down )] * combinations[(r_up, r_down - t_min - 1 )]
+        c_size = combinations[(l_up, t_min + 1 + l_down )] * combinations[(r_up, r_down - (t_min + 1) )]
         
         score = 0
         
