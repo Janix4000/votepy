@@ -68,12 +68,9 @@ def chamberlin_courant_greedy(voting: Union[OrdinalElection, List[int]], size_of
     if size_of_committee > n or size_of_committee <= 0:
         raise ValueError(f"Size of committee needs to be from the range 1 to the number of all candidates.")
 
-    functions = {
-        "k_borda": k_borda,
-    }
 
     return greedy(voting, size_of_committee,
-                  lambda committee, voting, candidate: functions[scoring_function](committee, voting, candidate,
+                  lambda committee, voting, candidate: k_borda(committee, voting, candidate,
                                                                                    number_of_scored_candidates))
 
 
