@@ -3,8 +3,7 @@ from typing import Callable, Iterable
 from itertools import combinations
 
 
-def brute_force(voting: OrdinalElection, size_of_committee: int,
-                scoring_function: Callable[[Iterable[int], OrdinalElection], int]) -> list[int]:
+def brute_force(voting: OrdinalElection, size_of_committee: int, scoring_function: Callable[[Iterable[int], OrdinalElection], int]) -> list[int]:
     """A generic brute force algorithm that calculates the winning committee using a given scoring function
     Args:
         voting (OrdinalElection): Voting for which the function calculates the committee
