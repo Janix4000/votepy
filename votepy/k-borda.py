@@ -11,8 +11,8 @@ def k_borda(voting: Union[OrdinalElection, list[int]], size_of_committee: int, n
         number_of_scored_candidates (int): Number of scored candidartes using k-borda rule
 
     Raises:
-        ValueError: Size of commite is a positive number which do not exceeds number of all candidates
-        ValueError: Number of candidates scored in k-borda is a positive number which do not exceeds number of all candidates
+        ValueError: Size of committee is a positive number which does not exceed number of all candidates
+        ValueError: Number of candidates scored in k-borda is a positive number which does not exceed number of all candidates
 
     Returns:
         OrdinalBallot: List of chosen candidates wrapped in ordinalBallot
