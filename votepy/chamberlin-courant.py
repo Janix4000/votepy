@@ -1,7 +1,7 @@
 import collections
 
 from ordinal_election import OrdinalElection
-from typing import Union, Iterable, List
+from typing import Union, Iterable
 from generic_brute_force import brute_force
 from generic_greed import greedy
 from generic_p_algorithm import p_algorithm
@@ -17,8 +17,7 @@ def basic_k_borda(committee: Iterable[int], voting: OrdinalElection, number_of_s
     return score
 
 
-def chamberlin_courant_brute_force(voting: Union[OrdinalElection, list[int]], size_of_committee: int,
-                                   number_of_scored_candidates: int) -> list[int]:
+def chamberlin_courant_brute_force(voting: Union[OrdinalElection, list[int]], size_of_committee: int, number_of_scored_candidates: int) -> list[int]:
     """Brute force implementation of the chamberlin-courant rule
     Args:
         voting (Union[OrdinalElection, list[int]]): Voting for which the function calculates the committee
@@ -39,6 +38,7 @@ def chamberlin_courant_brute_force(voting: Union[OrdinalElection, list[int]], si
     n = voting.ballot_size
     if size_of_committee > n or size_of_committee <= 0:
         raise ValueError(f"Size of committee needs to be from the range 1 to the number of all candidates.")
+
 
     return brute_force(voting, size_of_committee,
                        lambda committee, voting: k_borda(committee, voting, number_of_scored_candidates))
