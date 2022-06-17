@@ -29,7 +29,8 @@ def chamberlin_courant_brute_force(voting: Union[OrdinalElection, list[int]], si
 
     n = voting.ballot_size
     if size_of_committee > n or size_of_committee <= 0:
-        raise ValueError(f"Size of committee needs to be from the range 1 to the number of all candidates.")
+        raise ValueError(
+            f"Size of committee needs to be from the range 1 to the number of all candidates.")
 
     return brute_force(voting, size_of_committee, lambda committee, voting: scoring_function(committee,
                                                                                              voting, number_of_scored_candidates))
@@ -62,14 +63,16 @@ def chamberlin_courant_greedy(voting: Union[OrdinalElection, list[int]], size_of
 
     n = voting.ballot_size
     if size_of_committee > n or size_of_committee <= 0:
-        raise ValueError(f"Size of committee needs to be from the range 1 to the number of all candidates.")
+        raise ValueError(
+            f"Size of committee needs to be from the range 1 to the number of all candidates.")
 
     return greedy(voting, size_of_committee,
                   lambda committee, voting, candidate: scoring_function(committee, voting, candidate,
                                                                         number_of_scored_candidates))
 
+
 def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[int]], size_of_committee: int,
-                              number_of_scored_candidates: int, solver: Union[Type[Gurobi], Type[CPLEX]] = Gurobi) -> list[int]:
+                           number_of_scored_candidates: int, solver: Union[Type[Gurobi], Type[CPLEX]] = Gurobi) -> list[int]:
     """Implementation of the chamberlin-courant rule, using ILP formulation by:
     Peters, Dominik & Lackner, Martin. (2020).
     Preferences Single-Peaked on a Circle.
@@ -86,23 +89,21 @@ def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[int]], size_of_co
         voting = OrdinalElection(voting)
 
     model = solver()
-    x = []
-    for i in range(voting.number_of_voters):
-        x.append([])
-        for r in range(voting.ballot_size):
-            x[-1].append(model.addVariable(f"x_{i},{r}", 'B', 1))
+    x = [[model.addVariable(f"x_{i},{r}", 'B', 1)
+          for r in range(voting.ballot_size)]
+         for i in range(voting.number_of_voters)]
 
-    y = []
-    for c in range(voting.ballot_size):
-        y.append(model.addVariable(f"y_{c}", 'B', 0))
+    y = [model.addVariable(f"y_{c}", 'B', 0) for c in range(voting.ballot_size)]
 
-    model.addConstraint('sum(y)', y, [1 for _ in range(len(y))], size_of_committee, 'E')
+    model.addConstraint(
+        'sum(y)', y, [1 for _ in range(len(y))], size_of_committee, 'E')
 
     for i in range(voting.number_of_voters):
         for r in range(voting.ballot_size):
+            top_r_candidates = [y[c] for c in voting[i][:r]]
             model.addConstraint(
                 'x[i][r] <= sum(y[c])',
-                [x[i][r]] + [y[c] for c in voting[i][:r]],
+                [x[i][r]] + top_r_candidates,
                 [1.0] + [-1.0 for _ in range(len(voting[i][:r]))],
                 0,
                 'L'
@@ -111,14 +112,14 @@ def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[int]], size_of_co
     model.solve()
 
     best_committee = []
-    for i,v in enumerate(model.getValues()[-voting.ballot_size:]):
+    for i, v in enumerate(model.getValues()[-voting.ballot_size:]):
         if v == 1:
             best_committee.append(i)
     return best_committee
 
 
 def chamberlin_courant_ilp_custom(voting: Union[OrdinalElection, list[int]], size_of_committee: int,
-                              number_of_scored_candidates: int, solver: Union[Type[Gurobi], Type[CPLEX]] = Gurobi) -> list[int]:
+                                  number_of_scored_candidates: int, solver: Union[Type[Gurobi], Type[CPLEX]] = Gurobi) -> list[int]:
     """Custom implementation of the chamberlin courant rule.
 
     Args:
@@ -132,35 +133,32 @@ def chamberlin_courant_ilp_custom(voting: Union[OrdinalElection, list[int]], siz
         voting = OrdinalElection(voting)
     model = solver()
 
-    x = []
-    for i in range(voting.ballot_size):
-        x.append(model.addVariable(f"x_{i}", 'B'))
+    x = [model.addVariable(f"x_{i}", 'B') for i in range(voting.ballot_size)]
+    # for i in range(voting.ballot_size):
+    #     x.append(model.addVariable(f"x_{i}", 'B'))
 
     y = []
     for i, vote in enumerate(voting):
         y.append([None]*voting.ballot_size)
         for j, candidate in enumerate(vote):
-            y[-1][candidate] = (model.addVariable(f"y_{i}_{j}", "B", voting.ballot_size - j))
+            y[-1][candidate] = (model.addVariable(
+                f"y_{i}_{j}", "B", voting.ballot_size - j))
 
     model.addConstraint("sum(x) == k", x, [1]*len(x), size_of_committee, 'E')
 
     for i in range(voting.number_of_voters):
         model.addConstraint("sum(y[i]) == 1", y[i], [1]*len(y[i]), 1, 'E')
         for j in range(voting.ballot_size):
-            model.addConstraint("x[j] >= y[i][j]", [x[j], y[i][j]], [1,-1], 0, 'G')
+            model.addConstraint("x[j] >= y[i][j]", [
+                                x[j], y[i][j]], [1, -1], 0, 'G')
 
     model.solve()
 
     best_committee = []
-    for i,v in enumerate(model.getValues()[:voting.ballot_size]):
+    for i, v in enumerate(model.getValues()[:voting.ballot_size]):
         if v == 1:
             best_committee.append(i)
     return best_committee
-
-
-
-
-
 
 
 if __name__ == '__main__':
@@ -180,12 +178,12 @@ if __name__ == '__main__':
     })
     print(election)
     print("Brute_force:",
-        chamberlin_courant_brute_force(
-            election,
-            2,
-            5
-        )
-    )
+          chamberlin_courant_brute_force(
+              election,
+              2,
+              5
+          )
+          )
     print(
         "Greedy:",
         chamberlin_courant_greedy(
