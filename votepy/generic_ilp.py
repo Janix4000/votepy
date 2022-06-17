@@ -64,7 +64,7 @@ class Solver(ABC):
 
 
 class CPLEX(Solver):
-    def __init__(self, sense: Solver.Sense = Solver.Sense.MAX) -> None:
+    def __init__(self, sense: Solver.Sense = Solver.Sense.MAX, log: bool = False) -> None:
         super().__init__()
         try:
             import cplex
@@ -85,8 +85,9 @@ class CPLEX(Solver):
 
         self.cplex = cplex
         self.model = cplex.Cplex()
-        self.model.set_log_stream(None)
-        self.model.set_results_stream(None)
+        if not log:
+            self.model.set_log_stream(None)
+            self.model.set_results_stream(None)
 
         if sense == Solver.Sense.MAX:
             self.model.objective.set_sense(self.model.objective.sense.maximize)
@@ -127,7 +128,7 @@ class CPLEX(Solver):
 
 
 class Gurobi(Solver):
-    def __init__(self, sense: Solver.Sense = Solver.Sense.MAX) -> None:
+    def __init__(self, sense: Solver.Sense = Solver.Sense.MAX, log: bool = False) -> None:
         super().__init__()
         try:
             import gurobipy as gp
@@ -139,7 +140,8 @@ class Gurobi(Solver):
         # TODO
         # forcefully disabling Gurobi logs for now, can be replaced by config file later
         env = gp.Env(empty=True)
-        env.setParam('OutputFlag', 0)
+        if not log:
+            env.setParam('OutputFlag', 0)
         env.start()
 
         self.model = gp.Model(env=env)
@@ -173,10 +175,26 @@ class Gurobi(Solver):
             self.model.addConstr(expr >= rhs, name)
         elif sense == 'E':
             self.model.addConstr(expr == rhs, name)
+            
+    def _setObjective(self):
+        self.model.setObjective(sum(self.objective), self.sense)
 
     def solve(self):
-        self.model.setObjective(sum(self.objective), self.sense)
+        self._setObjective()
         self.model.optimize()
 
     def getValues(self):
         return [v.X for v in self.model.getVars()]
+    
+    def _debug(self, filename='model_dump.lp'):
+        self._setObjective()
+        try:
+            self.model.computeIIS()
+            print("Computed Irreducible Inconsistent Subsystem:")
+            for i, c in zip(self.model.IISConstr, self.model.getConstrs()):
+                if i == 1:
+                    print(c)
+        except self.gurobipy.GurobiError:
+            print("The model is feasible!")
+        self.model.write(filename)
+        
