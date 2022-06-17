@@ -103,9 +103,9 @@ def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[int]], size_of_co
         for r in range(voting.ballot_size):
             top_r_candidates = [y[c] for c in voting[i][:r]]
             model.addConstraint(
-                f'x_{i}_{r} <= sum(y[{c}])',
+                f'x_{i}_{r} <= sum(top_{r}_candidates)',
                 [x[i][r]] + top_r_candidates,
-                [1.0] + [-1.0 for _ in range(len(voting[i][:r]))],
+                [1.0] + [-1.0]*len(voting[i][:r]),
                 0,
                 'L'
             )
