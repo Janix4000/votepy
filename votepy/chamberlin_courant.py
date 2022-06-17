@@ -220,12 +220,12 @@ if __name__ == '__main__':
             Gurobi
         )
     )
-    print(
-        "ILP custom(CPLEX):",
-        chamberlin_courant_ilp_custom(
-            election,
-            2,
-            5,
-            CPLEX
-        )
-    )
+    # print(
+    #     "ILP custom(CPLEX):",
+    #     chamberlin_courant_ilp_custom(
+    #         election,
+    #         2,
+    #         5,
+    #         CPLEX
+    #     )
+    # )
