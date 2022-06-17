@@ -93,7 +93,8 @@ def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[int]], size_of_co
           for r in range(voting.ballot_size)]
          for i in range(voting.number_of_voters)]
 
-    y = [model.addVariable(f"y_{c}", 'B', 0) for c in range(voting.ballot_size)]
+    y = [model.addVariable(f"y_{c}", 'B', 0)
+         for c in range(voting.ballot_size)]
 
     model.addConstraint(
         'sum(y)', y, [1]*len(y), size_of_committee, 'E')
@@ -102,7 +103,7 @@ def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[int]], size_of_co
         for r in range(voting.ballot_size):
             top_r_candidates = [y[c] for c in voting[i][:r]]
             model.addConstraint(
-                'x[i][r] <= sum(y[c])',
+                f'x_{i}_{r} <= sum(y[{c}])',
                 [x[i][r]] + top_r_candidates,
                 [1.0] + [-1.0 for _ in range(len(voting[i][:r]))],
                 0,
@@ -147,9 +148,9 @@ def chamberlin_courant_ilp_custom(voting: Union[OrdinalElection, list[int]], siz
     model.addConstraint("sum(x) == k", x, [1]*len(x), size_of_committee, 'E')
 
     for i in range(voting.number_of_voters):
-        model.addConstraint("sum(y[i]) == 1", y[i], [1]*len(y[i]), 1, 'E')
+        model.addConstraint(f"sum(y[{i}]) == 1", y[i], [1]*len(y[i]), 1, 'E')
         for j in range(voting.ballot_size):
-            model.addConstraint("x[j] >= y[i][j]", [
+            model.addConstraint(f"x_{j} >= y_{i}_{j}", [
                                 x[j], y[i][j]], [1, -1], 0, 'G')
 
     model.solve()
