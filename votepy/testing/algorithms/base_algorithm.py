@@ -1,0 +1,44 @@
+from abc import abstractmethod, ABCMeta
+
+from ordinal_election import OrdinalElection
+
+
+class BaseAlgorithm(ABCMeta):
+    name = None
+
+    def __init__(self) -> None:
+        self.__prepared = False
+
+    def prepare(self) -> None:
+        self.__prepared = True
+
+    @abstractmethod
+    def _solve(self, voting: OrdinalElection, size_of_committee: int) -> list[int]:
+        pass
+
+    def solve(self, voting: OrdinalElection, size_of_committee: int) -> list[int]:
+        """Solves a voting using the specified algorithm, which must be fully prepared for the election rule. It assures all runtime checks.
+
+        Args:
+            `voting` (`OrdinalElection`): Voting for which the algorithm calculates the committee
+            `size_of_committee` (`int`): Size of the committee
+
+        Raises:
+            ValueError: Size of committee needs to be from the range 1 to the number of all candidates.
+
+        Returns:
+            `list[int]`: The winning committee
+        """
+        if not self.__prepared:
+            raise ValueError(
+                f'Algorithm must be initialized with `prepare(self, ...)` method before usage.')
+
+        if not isinstance(voting, OrdinalElection):
+            voting = OrdinalElection(voting)
+
+        n = voting.ballot_size
+        if size_of_committee > n or size_of_committee <= 0:
+            raise ValueError(
+                f"Size of committee needs to be from the range 1 to the number of all candidates.")
+
+        return self._solve(voting, size_of_committee)
