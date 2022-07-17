@@ -72,16 +72,18 @@ if __name__ == '__main__':
     })
     print(election)
     print(
-        chamberlin_courant_brute_force(
+        chamberlin_courant(
             election,
             2,
-            5
+            5,
+            algorithm='brute_force'
         )
     )
     print(
-        chamberlin_courant_greedy(
+        chamberlin_courant(
             election,
             2,
-            5
+            5,
+            algorithm=Greedy()
         )
     )
