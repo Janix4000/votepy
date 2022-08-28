@@ -1,8 +1,8 @@
-from ordinal_election import OrdinalElection
-from typing import Union, Iterable
-from generic_brute_force import brute_force
-from generic_greed import greedy
+from votepy.ordinal_election import OrdinalElection
+from votepy.generic_brute_force import brute_force
+from votepy.generic_greed import greedy
 
+from typing import Union, Iterable
 
 def chamberlin_courant_brute_force(voting: Union[OrdinalElection, list[int]], size_of_committee: int, number_of_scored_candidates: int) -> list[int]:
     """Brute force implementation of the chamberlin-courant rule
@@ -11,7 +11,7 @@ def chamberlin_courant_brute_force(voting: Union[OrdinalElection, list[int]], si
         size_of_committee (int): Size of the committee
         number_of_scored_candidates (int): Number of scored candidartes using k-borda rule
     Returns:
-        list[int]: List of chosen candidates
+        list[int]: list of chosen candidates
     """
     def scoring_function(committee: Iterable[int], voting: OrdinalElection, number_of_scored_candidates: int):
         committee = set(committee)
@@ -34,8 +34,8 @@ def chamberlin_courant_brute_force(voting: Union[OrdinalElection, list[int]], si
                                                                                              voting, number_of_scored_candidates))
 
 
-def chamberlin_courant_greedy(voting: Union[OrdinalElection, List[int]], size_of_committee: int,
-                              number_of_scored_candidates: int) -> List[int]:
+def chamberlin_courant_greedy(voting: Union[OrdinalElection, list[int]], size_of_committee: int,
+                              number_of_scored_candidates: int) -> list[int]:
     """Greedy implementation of the chamberlin-courant rule
     Args:
         voting (Union[OrdinalElection, list[int]]): Voting for which the function calculates the committee

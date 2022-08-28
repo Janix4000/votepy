@@ -45,6 +45,7 @@ setuptools.setup(
             "pytest>=6",
             "coverage[toml]>=5.3",
             "matplotlib>=3.4.3",
+            "pytest>=7.1",
         ]
     },
 )
