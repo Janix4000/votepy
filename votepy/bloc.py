@@ -1,19 +1,19 @@
-from ordinal_election import OrdinalElection
+from votepy.ordinal_election import OrdinalElection
 from typing import Union
 
 def bloc(voting: Union[OrdinalElection, list[int]], size_of_committee: int) -> list[int]:
     """Function computes a committee of given size using Bloc rule for specified number of favorite candidates.
 
-    Args:
-        voting (OrdinalElection | list): voting for which the function calculates the committee
-        size_of_committee (int): Size of the committee
+    # Args:
+        `voting` (OrdinalElection | list): voting for which the function calculates the committee
+        `size_of_committee` (int): Size of the committee
 
-    Raises:
-        ValueError: Size of commite is a positive number which do not exceeds number of all candidates
-        ValueError: Number of candidates scored in Bloc is a positive number which do not exceeds number of all candidates
+    # Raises:
+        `ValueError`: Size of committee is a positive number which do not exceeds number of all candidates
+        `ValueError`: Number of candidates scored in Bloc is a positive number which do not exceeds number of all candidates
 
-    Returns:
-        list: List of chosen candidates
+    # Returns:
+        `list`: List of chosen candidates
     """
     
     if not isinstance(voting, OrdinalElection): 
