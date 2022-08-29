@@ -1,4 +1,5 @@
-from ordinal_election import OrdinalElection
+from votepy.ordinal_election import OrdinalElection
+
 from typing import Callable, Iterable
 
 

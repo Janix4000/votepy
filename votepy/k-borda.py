@@ -1,45 +1,49 @@
 from votepy.ordinal_election import OrdinalElection, OrdinalBallot
 
 from typing import Union
-import numpy as np
 
 
-def sntv(voting: Union[OrdinalElection, list[int]], size_of_committee: int) -> list[int]:
-    """Function computes a committee of given size using SNTV rule for specified number of scored candidates.
+def k_borda(voting: Union[OrdinalElection, list[int]], size_of_committee: int, number_of_scored_candidates: int) -> list[int]:
+    """Function computes a committee of given size using k-borda rule for specified number of scored candidates.
     In this version for multiple results only arbitrary one is returned.
 
     Args:
         voting (OrdinalElection): voting for which the function calculates the committee
         size_of_committee (int): Size of the committee
+        number_of_scored_candidates (int): Number of scored candidartes using k-borda rule
 
     Raises:
         ValueError: Size of commite is a positive number which do not exceeds number of all candidates
-        ValueError: Number of candidates scored in SNTV is a positive number which do not exceeds number of all candidates
+        ValueError: Number of candidates scored in k-borda is a positive number which do not exceeds number of all candidates
 
     Returns:
-        list[int]: List of chosen candidates
+        OrdinalBallot: List of chosen candidates wrapped in ordinalBallot
     """
 
     if not isinstance(voting, OrdinalElection):
         voting = OrdinalElection(voting)
 
     n = voting.ballot_size
+    results = [0] * n
     if size_of_committee > n or size_of_committee <= 0:
         raise ValueError(
             f"Size of committee needs to be from the range 1 to the number of all candidates.")
-
-    results = np.zeros(n)
+    if number_of_scored_candidates > n or number_of_scored_candidates <= 0:
+        raise ValueError(
+            f"Number of candidates scored in k-borda needs to be from range 1 to the number of all candidates.")
     for vote in voting:
-        results[vote[0]] += 1
+        m = number_of_scored_candidates
+        for candidate in vote[:number_of_scored_candidates]:
+            results[candidate] += m
+            m -= 1
     committee, _ = zip(
         *sorted(enumerate(results), reverse=True, key=lambda t: t[1]))
     return committee[:size_of_committee]
 
 
 if __name__ == '__main__':
-    print(sntv([
+    print(k_borda([
         [0, 1, 2, 3],
         [3, 2, 1, 0],
-        [2, 1, 3, 0],
-        [2, 1, 3, 0],
-    ], 2))
+        [2, 1, 3, 0]
+    ], 2, 3))
