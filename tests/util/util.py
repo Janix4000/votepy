@@ -1,5 +1,5 @@
 import json
-from typing import Callable, Iterable
+from typing import Callable, Iterable, Iterator
 
 
 def assert_approximation(committee: list, scoring_function, expected_score: float, alpha: float) -> None:
@@ -13,7 +13,16 @@ CommitteeSize = int
 Score = float
 
 
-def load_tests(filepath: str) -> Iterable[tuple[Election, CommitteeSize, Score]]:
+def load_tests(filepath: str) -> Iterator[tuple[Election, CommitteeSize, Score]]:
+    """# Summary
+    Yields (election, committee_size, expected_score) test triples from the json file.
+
+    ## Args:
+        `filepath` (str): Filepath to the json file containing testing elections.
+
+    ## Yields:
+        -> Iterator[tuple[Election, CommitteeSize, Score]]: (election, committee_size, expected_score) triple
+    """
     with open(filepath, 'r') as file:
         tests = json.load(file)["tests"]
     for election in tests:
@@ -33,6 +42,14 @@ def generate_tests(
     generator: Callable[[Candidates, Voters], Election],
     solver: Callable[[Election, CommitteeSize], Score]
 ) -> None:
+    """Generates json file containing testing elections, described by (n_candidates, n_voters) pairs in `election`, generated using `generator` and solved with `solver`.
+
+    # Args:
+        `filepath` (str): File path of newly generated test file
+        `elections` (Iterable[tuple[Candidates, Voters]]): Collections of (n_candidates, n_voters) pairs, describing elections for generator
+        `generator` (Callable[[Candidates, Voters], Election]): Function generating elections based on (n_candidates, n_voters) arguments
+        `solver` (Callable[[Election, CommitteeSize], Score]): Function returning the score of the committee, for the given election
+    """
     all_tests = []
     for candidates_size, voters_size in elections:
         election = generator(candidates_size, voters_size)
