@@ -1,5 +1,5 @@
 # votepy
-![Tests](https://https://github.com/Janix4000/votepy/actions/workflows/tests.yml/badge.svg)
+![Tests](https://github.com/Janix4000/votepy/actions/workflows/tests.yml/badge.svg)
 
 ## Contribution/installation guide
 
