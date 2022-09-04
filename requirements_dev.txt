@@ -1,0 +1,6 @@
+
+
+flake8==3.9.2
+pytest==7.1.2
+pytest-cov==2.12.1
+mypy===0.971
