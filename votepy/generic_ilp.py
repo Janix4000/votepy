@@ -206,7 +206,7 @@ class Gurobi(Solver):
     def _debug(self, filename='model_dump.lp'):
         self._setObjective()
         try:
-            self.model.computeIIS()
+           self.model.computeIIS()
             print("Computed Irreducible Inconsistent Subsystem:")
             for i, c in zip(self.model.IISConstr, self.model.getConstrs()):
                 if i == 1:
