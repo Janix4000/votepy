@@ -5,22 +5,24 @@ from warnings import warn
 
 
 class Solver(ABC):
+
     class Sense(Enum):
         MAX = 1
         MIN = 2
 
     @abstractmethod
-    def addVariable(self, name: str, vartype: str, obj: Optional[float], lb: Optional[float], ub: Optional[float]):
-        """Add a variable to the model
+    def addVariable(self, name: str, vartype: str, obj: Optional[float],
+                    lb: Optional[float], ub: Optional[float]):
+        """Adds a variable to the model
 
         Args:
-            name (str): Name of the variable
+            name (str): Name of the variable, used to reference the variable and for printing
             vartype (str): Type of the variable ('B' - Binary, 'C' - continuous, 'I' - Integer)
             obj (Optional[float]): Coefficient at the variable in the objective function, default is 0.
             lb (Optional[float]): Lower bound of the variable, defaults are dictated by the solver.
             ub (Optional[float]): Upper bound of the variable, defaults are dictated by the solver.
         Returns:
-            vartype: An object representing the variable in the selected solver. 
+            vartype: An object representing the variable in the selected solver.
             It has to be used in the 'variables' arg in the addConstraint method
         """
         pass
@@ -64,13 +66,17 @@ class Solver(ABC):
 
 
 class CPLEX(Solver):
-    def __init__(self, sense: Solver.Sense = Solver.Sense.MAX, log: bool = False) -> None:
+
+    def __init__(self,
+                 sense: Solver.Sense = Solver.Sense.MAX,
+                 log: bool = False) -> None:
         super().__init__()
         try:
             import cplex
         except ImportError as err:
             raise ImportError(
-                "Failed to import CPLEX, please make sure that you have CPLEX installed")
+                "Failed to import CPLEX, please make sure that you have CPLEX installed"
+            )
 
         self.col_names = []
         self.obj = []
@@ -94,8 +100,13 @@ class CPLEX(Solver):
         elif sense == Solver.Sense.MIN:
             self.model.objective.set_sense(self.model.objective.sense.minimize)
 
-    def addVariable(self, name: str, vartype: str, obj: float = 0.0, lb: Optional[float] = None, ub: Optional[float] = None):
-        self.col_names.append(name)
+    def addVariable(self,
+                    name: str,
+                    vartype: str,
+                    obj: float = 0.0,
+                    lb: Optional[float] = None,
+                    ub: Optional[float] = None):
+        self.colnames.append(name)
         self.obj.append(obj)
         if lb is not None:
             self.lb.append(lb)
@@ -111,7 +122,8 @@ class CPLEX(Solver):
         self.senses.append(sense)
 
     def solve(self):
-        if len(self.lb) != len(self.ctypes) or len(self.ub) != len(self.ctypes):
+        if len(self.lb) != len(self.ctypes) or len(self.ub) != len(
+                self.ctypes):
             if len(self.lb) > 0 or len(self.ub) > 0:
                 warn("Warning: You've given bounds for some variables but not for all - please make sure you either set bounds for every variable or for none.\nUsing default bounds...")
             self.model.variables.add(obj=self.obj, types=''.join(
@@ -128,14 +140,18 @@ class CPLEX(Solver):
 
 
 class Gurobi(Solver):
-    def __init__(self, sense: Solver.Sense = Solver.Sense.MAX, log: bool = False) -> None:
+
+    def __init__(self,
+                 sense: Solver.Sense = Solver.Sense.MAX,
+                 log: bool = False) -> None:
         super().__init__()
         try:
             import gurobipy as gp
             from gurobipy import GRB
         except ImportError as _err:
             raise ImportError(
-                "Failed to import Gurobi, please make sure that you have Gurobi installed")
+                "Failed to import Gurobi, please make sure that you have Gurobi installed"
+            )
 
         # TODO
         # forcefully disabling Gurobi logs for now, can be replaced by config file later
@@ -160,22 +176,23 @@ class Gurobi(Solver):
     def addVariable(self, name: str, var_type: str, obj: Optional[float] = None, lb: Optional[float] = None, ub: Optional[float] = None):
         var = self.model.addVar(vtype=self.var_type_map[var_type], name=name)
         if lb is not None:
-            self.model.addConstr(var >= lb, name+'_lb')
+            self.model.addConstr(var >= lb, name + '_lb')
         if ub is not None:
-            self.model.addConstr(var <= ub, name+'_ub')
+            self.model.addConstr(var <= ub, name + '_ub')
         if obj != None:
-            self.objective.append(obj*var)
+            self.objective.append(obj * var)
         return var
 
-    def addConstraint(self, name: str, variables: list[object], coeffs: list[float], rhs: float, sense: str):
-        expr = sum([v*c for v, c in zip(variables, coeffs)])
+    def addConstraint(self, name: str, variables: list[object],
+                      coeffs: list[float], rhs: float, sense: str):
+        expr = sum([v * c for v, c in zip(variables, coeffs)])
         if sense == 'L':
             self.model.addConstr(expr <= rhs, name)
         elif sense == 'G':
             self.model.addConstr(expr >= rhs, name)
         elif sense == 'E':
             self.model.addConstr(expr == rhs, name)
-            
+
     def _setObjective(self):
         self.model.setObjective(sum(self.objective), self.sense)
 
@@ -185,7 +202,7 @@ class Gurobi(Solver):
 
     def getValues(self):
         return [v.X for v in self.model.getVars()]
-    
+
     def _debug(self, filename='model_dump.lp'):
         self._setObjective()
         try:
@@ -197,4 +214,3 @@ class Gurobi(Solver):
         except self.gurobipy.GurobiError:
             print("The model is feasible!")
         self.model.write(filename)
-        
