@@ -45,7 +45,7 @@ def chamberlin_courant_brute_force(voting: Union[OrdinalElection, list[int]], si
 
 
 def chamberlin_courant_greedy(voting: Union[OrdinalElection, List[int]], size_of_committee: int,
-                              number_of_scored_candidates: int, scoring_function: str = "k_borda") -> List[int]:
+                              number_of_scored_candidates: int) -> List[int]:
     """Greedy implementation of the chamberlin-courant rule
     Args:
         voting (Union[OrdinalElection, list[int]]): Voting for which the function calculates the committee
