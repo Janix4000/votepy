@@ -2,7 +2,7 @@ from ordinal_election import OrdinalElection, OrdinalBallot
 from typing import Union
 
 
-def k_borda(voting: Union[OrdinalElection, list[int]], size_of_committee: int, number_of_scored_candidates: int) -> list[int]:
+def k_borda(voting: Union[OrdinalElection, list[int]], size_of_committee: int, number_of_scored_candidates: int, m: int = None) -> list[int]:
     """Function computes a committee of given size using k-borda rule for specified number of scored candidates.
     In this version for multiple results only arbitrary one is returned.
 
@@ -10,10 +10,11 @@ def k_borda(voting: Union[OrdinalElection, list[int]], size_of_committee: int, n
         voting (OrdinalElection): voting for which the function calculates the committee
         size_of_committee (int): Size of the committee
         number_of_scored_candidates (int): Number of scored candidates using k-borda rule
+        m (int): m parameter used by β Borda scoring function. By default equals to `number_of_scored_candidates`
 
     Raises:
         ValueError: Size of committee is a positive number which do not exceeds number of all candidates
-        ValueError: Number of candidates scored in k-borda is a positive number which do not exceeds number of all candidates
+        ValueError: Number of candidates scored in k-borda is a positive number which do not exceeds number of all candidates. 
 
     Returns:
         OrdinalBallot: List of chosen candidates wrapped in ordinalBallot
@@ -31,7 +32,8 @@ def k_borda(voting: Union[OrdinalElection, list[int]], size_of_committee: int, n
             f"Number of candidates scored in k-borda needs to be from range 1 to the number of all candidates.")
 
     candidates_scores = [0] * n
-    m = number_of_scored_candidates
+
+    m = m if m is not None else number_of_scored_candidates
 
     for vote in voting:
         for i, candidate in enumerate(vote[:number_of_scored_candidates]):
