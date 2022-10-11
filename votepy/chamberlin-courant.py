@@ -73,7 +73,7 @@ def chamberlin_courant_greedy(voting: Union[OrdinalElection, List[int]], size_of
                   lambda committee, voting, candidate: k_borda(committee, voting, candidate,
                                                                                    number_of_scored_candidates))
 
-
+# Based on https://arxiv.org/abs/1901.09217
 def chamberlin_courant_p_algorithm(voting: Union[OrdinalElection, List[int]], size_of_committee: int) -> List[int]:
     def p_algorithm_basic(voting: OrdinalElection, size_of_committee: int, threshold: int):
         scores = collections.defaultdict(int)
