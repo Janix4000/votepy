@@ -1,4 +1,4 @@
-from ordinal_election import OrdinalElection, OrdinalBallot
+from votepy.ordinal_election import OrdinalElection, OrdinalBallot
 from typing import Union
 
 
