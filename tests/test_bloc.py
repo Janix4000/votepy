@@ -19,7 +19,6 @@ def scoring(voting: OrdinalElection, committee: list[int]) -> float:
 
 
 def test_bloc():
-    print(os.getcwd())
     for voting, size_of_committee, expected_score in load_tests("tests/fixtures/bloc_medium.json"):
         voting = OrdinalElection(voting)
         committee = bloc(voting, size_of_committee)
