@@ -47,9 +47,7 @@ def generate_tests(
     all_tests = []
     for candidates_size, voters_size in elections:
         election = generator(candidates_size, voters_size)
-        test = {}
-        test["election"] = election
-        test["scores"] = []
+        test = {"election": election, "scores": []}
         for committee_size in range(1, candidates_size):
             score = solver(election, committee_size)
             test["scores"].append([committee_size, score])
