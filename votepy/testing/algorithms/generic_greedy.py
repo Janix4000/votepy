@@ -13,10 +13,10 @@ class Greedy(BaseAlgorithm):
         super().__init__()
 
     def prepare(self, scoring_function: Callable[[Iterable[int], OrdinalElection, int], int]):
-        """Prepare the scoring function. Should be invoked only by voting rule function.
+        """Prepare the scoring function. Should be invoked only by the voting rule function.
 
         Args:
-            `scoring_function` (`Callable[[Iterable[int], OrdinalElection, int], int]`): The scoring function used to determine the best committee. It should take the committee, election and candidate as parameters and return the score of that committee.
+            `scoring_function` (`(Iterable[int], OrdinalElection, int) -> int`): The scoring function used to determine the best committee. It should take the committee, election and candidate as parameters and return the score of that committee.
         """
         self.scoring_function = scoring_function
         super().prepare()
