@@ -1,5 +1,4 @@
 from votepy.ordinal_election import OrdinalElection
-
 from typing import Callable, Iterable
 
 
@@ -15,9 +14,9 @@ def greedy(voting: OrdinalElection, size_of_committee: int,
         list[int]: The winning committee
     """
     resultant_committee = []
-    best_score = 0
     remaining_candidates = set(i for i in range(voting.ballot_size))
     for _ in range(size_of_committee):
+        best_score = 0
         current_best_candidate, current_best_score = -1, best_score
         for candidate in remaining_candidates:
             score = scoring_function(resultant_committee, voting, candidate)
@@ -26,6 +25,5 @@ def greedy(voting: OrdinalElection, size_of_committee: int,
                 current_best_score = score
         remaining_candidates.remove(current_best_candidate)
         resultant_committee.append(current_best_candidate)
-        best_score = current_best_score
+        #best_score = current_best_score
     return resultant_committee
-
