@@ -1,9 +1,7 @@
-import re
-from typing import Callable
-
-from testing.algorithms.base_algorithm import BaseAlgorithm
+from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
 
 from functools import wraps
+from typing import Callable
 
 
 implementations: dict[str, dict[str, Callable]] = dict()

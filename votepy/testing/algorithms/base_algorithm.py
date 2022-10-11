@@ -1,6 +1,6 @@
-from abc import abstractmethod, ABCMeta
+from votepy.ordinal_election import OrdinalElection
 
-from ordinal_election import OrdinalElection
+from abc import abstractmethod, ABCMeta
 
 
 class BaseAlgorithm(ABCMeta):

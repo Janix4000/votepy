@@ -1,8 +1,9 @@
-from ordinal_election import OrdinalElection
-from typing import Callable, Iterable
+from votepy.ordinal_election import OrdinalElection
+from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
+from votepy.testing.structure.structure import algo
+
 from itertools import combinations
-from testing.algorithms.base_algorithm import BaseAlgorithm
-from testing.structure.structure import algo
+from typing import Callable, Iterable
 
 
 @algo(name='brute_force')

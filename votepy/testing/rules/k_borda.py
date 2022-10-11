@@ -1,8 +1,9 @@
 from ordinal_election import OrdinalElection
-from typing import Union
 
-from testing.algorithms.base_algorithm import BaseAlgorithm
-from testing.structure.structure import algo, rule
+from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
+from votepy.testing.structure.structure import algo, rule
+
+from typing import Union
 
 
 @algo(name='k_borda')
