@@ -11,7 +11,7 @@ def bloc(voting: Union[OrdinalElection, list[int]], size_of_committee: int) -> l
         `size_of_committee` (int): Size of the committee
 
     ### Raises:
-        `ValueError`: Size of committee is a positive number which do not exceeds number of all candidates
+        `ValueError`: The size of the committee is a positive integer which does not exceed the number of all candidates
         `ValueError`: The number of candidates scored in Bloc is a positive integer which does not exceed the number of all candidates
 
     ### Returns:
