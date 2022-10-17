@@ -1,5 +1,4 @@
-from re import A
-from votepy.testing.structure.structure import impl, rule, rules, implementations
+from votepy.testing.structure.structure import rule, rules
 
 
 @rule()
