@@ -1,9 +1,9 @@
 from votepy.ordinal_election import OrdinalElection
 
-from abc import abstractmethod, ABCMeta
+from abc import abstractmethod, ABC
 
 
-class BaseAlgorithm(ABCMeta):
+class BaseAlgorithm(ABC):
     name = None
 
     def __init__(self) -> None:

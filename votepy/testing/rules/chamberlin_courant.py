@@ -24,7 +24,7 @@ def chamberlin_courant(voting: Union[OrdinalElection, list[int]], size_of_commit
                    number_of_scored_candidates, algorithm)
 
 
-@imp(chamberlin_courant, BruteForce)
+@imp(rule=chamberlin_courant, algorithm=BruteForce)
 def chamberlin_courant_brute_force(voting, size_of_committee, number_of_scored_candidates, brute_force: BruteForce = BruteForce()) -> list[int]:
     def scoring_function(committee: Iterable[int], voting: OrdinalElection):
         committee = set(committee)

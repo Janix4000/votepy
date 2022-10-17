@@ -1,4 +1,4 @@
-from ordinal_election import OrdinalElection
+from votepy.ordinal_election import OrdinalElection
 
 from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
 from votepy.testing.structure.structure import algo, rule
