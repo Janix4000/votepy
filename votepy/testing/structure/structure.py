@@ -1,7 +1,8 @@
 from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
 
 from functools import wraps
-from typing import Callable
+from typing import Callable, Union
+import inspect
 
 
 implementations: dict[str, dict[str, Callable]] = dict()
@@ -15,6 +16,23 @@ def algo(name: str):
         algorithms[name] = Algorithm
         return Algorithm
     return inner
+
+
+def get_algorithm(algorithm: Union[str, BaseAlgorithm], *args, **kwargs) -> BaseAlgorithm:
+    if isinstance(algorithm, str):
+        if algorithm not in algorithms:
+            raise ValueError(
+                f"Algorithm {algorithm} not registered. Remember to register algorithm class and give it proper name with `@algo(name=)` decorator.")
+        algorithm = algorithms[algorithm]
+
+    if inspect.isclass(algorithm):
+        return algorithm(*args, **kwargs)
+
+    if isinstance(algorithm, BaseAlgorithm):
+        return algorithm
+
+    if isinstance(algorithm, object):
+        raise TypeError(f"Algorithm {algorithm} must derive from the `BaseAlgorithm`")
 
 
 def rule(name: str = None, auto_imp: bool = False):

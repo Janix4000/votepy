@@ -1,42 +1,32 @@
-from votepy.testing.structure.structure import rule, impl, algo, implementations, get_implementation
+from votepy.testing.structure.structure import rule, impl, algo, implementations, get_implementation, get_algorithm
+from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
 
 import pytest
 
-from abc import ABC, abstractmethod
-
-
-class MockBaseAlgorithm(ABC):
-    def __init__(self):
-        self.__prepared = False
-
-    @abstractmethod
-    def _solve(self, x: int, y: int) -> int:
-        pass
-
-    def solve(self, x: int, y: int) -> int:
-        return self._solve(x, y)
-
-    def prepare(self):
-        self.__prepared = True
-
 
 @algo(name="slow")
-class Slow(MockBaseAlgorithm):
+class Slow(BaseAlgorithm):
     def __init__(self, max_iterations: int) -> None:
         super().__init__()
         self.max_iterations = max_iterations
 
     def _solve(self, x: int, y: int):
         res = 0
-        for _ in range(max(x, self.max_iterations)):
+        for _ in range(min(x, self.max_iterations)):
             res += 1
-        for _ in range(max(y, self.max_iterations)):
+        for _ in range(min(y, self.max_iterations)):
             res += 1
         return res
 
+    def solve(self, x: int, y: int) -> int:
+        """# Summary
+        This method should not be overridden. It is for testing purposes only.
+        """
+        return self._solve(x, y)
+
 
 @algo(name="fast")
-class Fast(MockBaseAlgorithm):
+class Fast(BaseAlgorithm):
     def _solve(self, x: int, y: int) -> int:
         print(self.prompt)
         return x + y
@@ -45,9 +35,15 @@ class Fast(MockBaseAlgorithm):
         self.prompt = custom_prompt
         super().prepare()
 
+    def solve(self, x: int, y: int) -> int:
+        """# Summary
+        This method should not be overridden. It is for testing purposes only.
+        """
+        return self._solve(x, y)
+
 
 @rule()
-def add(x: int, y: int, algorithm: MockBaseAlgorithm = Fast()) -> int:
+def add(x: int, y: int, algorithm: BaseAlgorithm = Fast()) -> int:
     """# Summary
     Add two numbers
 
@@ -64,6 +60,7 @@ def add(x: int, y: int, algorithm: MockBaseAlgorithm = Fast()) -> int:
     3
     """
     implementation = get_implementation(add, algorithm)
+    algorithm = get_algorithm(algorithm)
     return implementation(x, y, algorithm)
 
 
@@ -103,3 +100,11 @@ def test_get_non_existing_implementations():
 
     with pytest.raises(ValueError):
         get_implementation(add, "int")
+
+
+def test_main_function_invocation():
+    assert add(1, 2, algorithm="fast") == 3
+    assert add(1, 2, algorithm=Fast()) == 3
+
+    slow = Slow(max_iterations=10)
+    assert add(1, 2, algorithm=slow) == 3
