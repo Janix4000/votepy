@@ -34,19 +34,17 @@ def algo(name: str):
     return inner
 
 
-def rule(auto_imp: bool = False):
-    def inner(rule: Callable):
-        rule_name = rule if isinstance(rule, str) else rule.__name__
-        rules[rule_name] = rule
-        if auto_imp:
-            raise NotImplementedError()
-            # @wraps(rule)
-            # def auto_fun(*args, algorithm=None, **kwargs):
-            #     algorithm_name = algorithm if isinstance(
-            #         algorithm, str) else algorithm.name
-            #     implementation = implementations[rule_name][algorithm_name]
-            #     return implementation(*args, algorithm=algorithm, **kwargs)
-            # return auto_fun
-        else:
-            return rule
-    return inner
+def rule(name: str = None, auto_imp: bool = False):
+    def actual_decorator(rule: Callable):
+        @wraps(rule)
+        def wrapper(*args, **kwargs):
+            if auto_imp:
+                raise NotImplementedError()
+            else:
+                return rule(*args, **kwargs)
+
+        rule_name = name if name is not None else rule.__name__
+        rules[rule_name] = wrapper
+
+        return wrapper
+    return actual_decorator
