@@ -8,7 +8,7 @@ from votepy.testing.algorithms.generic_greedy import Greedy
 from typing import Union, Iterable
 
 
-@rule
+@rule()
 def chamberlin_courant(voting: Union[OrdinalElection, list[int]], size_of_committee: int, number_of_scored_candidates: int, algorithm: BaseAlgorithm) -> list[int]:
     """Chamberlin-courant rule
     Args:

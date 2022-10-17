@@ -96,6 +96,7 @@ def rule(name: str = None):
     ... def some_rule():
     ...     pass
     """
+
     def actual_decorator(rule: Callable):
         @wraps(rule)
         def wrapper(*args, **kwargs):

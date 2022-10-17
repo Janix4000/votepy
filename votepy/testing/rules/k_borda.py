@@ -26,7 +26,7 @@ class KBorda(BaseAlgorithm):
         return committee[:size_of_committee]
 
 
-@rule
+@rule()
 def k_borda(voting: Union[OrdinalElection, list[int]], size_of_committee: int, number_of_scored_candidates: int) -> list[int]:
     """Function computes a committee of given size using k-borda rule for specified number of scored candidates.
     In this version for multiple results only arbitrary one is returned.
