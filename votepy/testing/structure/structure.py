@@ -9,7 +9,7 @@ algorithms: dict[str, BaseAlgorithm] = dict()
 rules: dict[str, Callable] = dict()
 
 
-def imp(rule: Callable, algorithm: BaseAlgorithm):
+def impl(rule: Callable, algorithm: BaseAlgorithm):
     def inner(fun):
         rule_name = rule if isinstance(rule, str) else rule.__name__
         algorithm_name = algorithm if isinstance(
