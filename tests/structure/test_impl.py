@@ -1,5 +1,6 @@
 from votepy.testing.structure.structure import rule, impl, algo, implementations, get_implementation, get_algorithm
 from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
+from votepy.testing.solve import solve
 
 import pytest
 
@@ -108,3 +109,15 @@ def test_main_function_invocation():
 
     slow = Slow(max_iterations=10)
     assert add(1, 2, algorithm=slow) == 3
+
+
+def test_solve():
+    assert solve(add, 1, 2, algorithm="fast") == 3
+    assert solve(add, 1, 2, algorithm=Fast()) == 3
+
+    assert solve("add", 1, 2, algorithm="fast") == 3
+    assert solve("add", 1, 2, algorithm=Fast()) == 3
+
+    slow = Slow(max_iterations=10)
+    assert solve(add, 1, 2, algorithm=slow) == 3
+    assert solve("add", 1, 2, algorithm=slow) == 3
