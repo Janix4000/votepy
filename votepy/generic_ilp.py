@@ -129,10 +129,23 @@ class CPLEX(Solver):
             self.model.variables.add(obj=self.obj, types=''.join(
                 self.ctypes), names=self.col_names)
         else:
+<<<<<<< HEAD
             self.model.variables.add(obj=self.obj, lb=self.lb, ub=self.ub, types=''.join(
                 self.ctypes), names=self.col_names)
         self.model.linear_constraints.add(lin_expr=self.rows, senses=''.join(
             self.senses), rhs=self.rhs, names=self.row_names)
+=======
+            self.model.variables.add(obj=self.obj,
+                                     lb=self.lb,
+                                     ub=self.ub,
+                                     types=''.join(self.ctypes),
+                                     names=self.colnames)
+        print(self.rows)
+        self.model.linear_constraints.add(lin_expr=self.rows,
+                                          senses=''.join(self.senses),
+                                          rhs=self.rhs,
+                                          names=self.rownames)
+>>>>>>> 7f1707f (Some more formatting)
         self.model.solve()
 
     def getValues(self):
@@ -207,8 +220,8 @@ class Gurobi(Solver):
         self._setObjective()
         try:
            self.model.computeIIS()
-            print("Computed Irreducible Inconsistent Subsystem:")
-            for i, c in zip(self.model.IISConstr, self.model.getConstrs()):
+           print("Computed Irreducible Inconsistent Subsystem:")
+           for i, c in zip(self.model.IISConstr, self.model.getConstrs()):
                 if i == 1:
                     print(c)
         except self.gurobipy.GurobiError:
