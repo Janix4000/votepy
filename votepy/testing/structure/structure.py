@@ -39,10 +39,10 @@ def algo(name: str):
 
 def get_algorithm(algorithm: Union[str, BaseAlgorithm], *args, **kwargs) -> BaseAlgorithm:
     """# Summary
-    Returns initialized algorithm object, registered with `@algo(name=)` decorator.
+    Returns initialized algorithm object, registered with `@algo(name=)` decorator
 
     ## Args:
-        `algorithm` (str | BaseAlgorithm): Name identification of the algorithm, class deriving from `BaseAlgorithm` or already initialized algorithm. 
+        `algorithm` (str | BaseAlgorithm): Name identification of the algorithm, class deriving from `BaseAlgorithm` or already initialized algorithm
 
     ## Raises:
         `ValueError`: Algorithm has not been registered.
@@ -90,8 +90,8 @@ def rule(name: str = None, default_algorithm: Union[BaseAlgorithm, str] = None):
     ### IT MUST BE USED WITH PARENTHESES, EVEN WITHOUT SPECIFYING `NAME` ARGUMENT.
 
     ## Args:
-        `name` (str, optional): Identification name of the voting rule. Defaults to the name of the function.
-        `default_algorithm` (BaseAlgorithm | str): Default algorithm class or its identification name. Defaults to None (no default algorithm).
+        `name` (str, optional): Identification name of the voting rule. Defaults to the name of the function
+        `default_algorithm` (BaseAlgorithm | str): Default algorithm class or its identification name. Defaults to None (no default algorithm)
 
     ## Examples
     >>> @rule()
@@ -108,7 +108,7 @@ def rule(name: str = None, default_algorithm: Union[BaseAlgorithm, str] = None):
         rules[rule_name] = wrapper
         implementations[rule_name] = {}
         if default_algorithm is not None:
-            default_algorithms[rule_name] = get_algorithm(default_algorithm)
+            default_algorithms[rule_name] = get_algorithm(default_algorithm).__class__
 
         return wrapper
     return actual_decorator
@@ -116,13 +116,13 @@ def rule(name: str = None, default_algorithm: Union[BaseAlgorithm, str] = None):
 
 def impl(rule: Union[Callable, str], algorithm: BaseAlgorithm):
     """# Summary
-    Decorator used to register specific implementation of the voting rule solving function, using algorithm. 
+    Decorator used to register specific implementation of the voting rule solving function, using algorithm
 
-    Implementation function must have `algorithm` argument.
+    Implementation function must have `algorithm` argument
 
     ## Args:
-        `rule` (Callable): Rule function or its identification name.
-        `algorithm` (BaseAlgorithm): Algorithm class or its identification name.
+        `rule` (Callable): Rule function or its identification name
+        `algorithm` (BaseAlgorithm): Algorithm class or its identification name
 
     ## Examples
     >>> from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
@@ -158,7 +158,44 @@ def impl(rule: Union[Callable, str], algorithm: BaseAlgorithm):
     return actual_decorator
 
 
-def get_implementation(rule: Callable, algorithm: BaseAlgorithm) -> Callable:
+def get_implementation(rule: Union[Callable, str], algorithm: BaseAlgorithm) -> Callable:
+    """# Summary
+    Returns `@impl` decorated function implementation for a given rule and algorithm
+
+    ## Args:
+        `rule` (Callable | str): Rule function or its identification name
+        `algorithm` (BaseAlgorithm): Name identification of the algorithm, class deriving from `BaseAlgorithm` or already initialized algorithm
+
+    ## Raises:
+        `ValueError`: Rule is not registered
+        `ValueError`: Algorithm is not adapted for the given rule
+
+    ## Returns:
+        -> Callable: Implementation of the given rule, using algorithm to find a committee
+
+    ## Examples
+    >>> from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
+    >>> 
+    >>> @algo(name='name')
+    ... class Algo(BaseAlgorithm):
+    ...     def _solve():
+    ...         pass
+    >>> @rule()
+    ... def some_rule():
+    ...     pass
+    >>>
+    >>> @impl(some_rule, Algo)
+    ... def some_rule_algo(algorithm):
+    ...     pass
+    >>> get_implementation(some_rule, Algo) == some_rule_algo
+    True
+    >>> get_implementation("some_rule", Algo) == some_rule_algo
+    True
+    >>> get_implementation(some_rule, "name") == some_rule_algo
+    True
+    >>> get_implementation("some_rule", "name") == some_rule_algo
+    True
+    """
     rule_name = rule if isinstance(rule, str) else rule.__name__
     algorithm_name = algorithm if isinstance(
         algorithm, str) else algorithm.name
@@ -175,6 +212,39 @@ def get_implementation(rule: Callable, algorithm: BaseAlgorithm) -> Callable:
 
 
 def get_default_algorithm(rule: Union[Callable, str]) -> BaseAlgorithm:
+    """# Summary
+    Returns default algorithm class for the given rule.
+
+    Algorithm must be specified as a `default_algorithm` parameter in the `@rule` decorator and implemented (using `impl` decorator)
+
+    ## Args:
+        `rule` (Callable | str): Rule function or its identification name.
+
+    ## Raises:
+        `ValueError`: Rule has no default algorithm
+
+    ## Returns:
+        -> BaseAlgorithm: Default algorithm
+
+    ## Examples
+    >>> from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
+    >>> 
+    >>> @algo(name='name')
+    ... class Algo(BaseAlgorithm):
+    ...     def _solve():
+    ...         pass
+    >>>
+    >>> @rule(default_algorithm=Algo)
+    ... def some_rule():
+    ...     pass
+    >>>
+    >>> @impl(some_rule, Algo)
+    ... def some_rule_algo(algorithm):
+    ...     pass
+    >>> 
+    >>> get_default_algorithm(some_rule) == Algo
+    True
+    """
     rule_name = rule if isinstance(rule, str) else rule.__name__
     if rule_name not in default_algorithms:
         raise ValueError(f"Rule {rule_name} has not default algorithm/implementation")
@@ -182,5 +252,35 @@ def get_default_algorithm(rule: Union[Callable, str]) -> BaseAlgorithm:
 
 
 def get_default_implementation(rule: Union[Callable, str]) -> Callable:
+    """# Summary
+    Returns implementation for the given rule using the default algorithm
+
+    ## Args:
+        `rule` (Callable | str): Rule function or its identification name.
+
+    ## Returns:
+        -> Callable: Implementation of the given rule, using default algorithm to find a committee
+
+    ## Examples
+    >>> from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
+    >>> 
+    >>> @algo(name='name')
+    ... class Algo(BaseAlgorithm):
+    ...     def _solve():
+    ...         pass
+    >>>
+    >>> @rule(default_algorithm=Algo)
+    ... def some_rule():
+    ...     pass
+    >>>
+    >>> @impl(some_rule, Algo)
+    ... def some_rule_algo(algorithm):
+    ...     pass
+    >>> 
+    >>> get_default_algorithm(some_rule) == Algo
+    True
+    >>> get_default_algorithm("some_rule") == Algo
+    True
+    """
     default_algorithm = get_default_algorithm(rule)
     return get_implementation(rule, default_algorithm)
