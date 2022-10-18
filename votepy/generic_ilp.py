@@ -160,6 +160,7 @@ class Gurobi(Solver):
         super().__init__()
         try:
             import gurobipy as gp
+            self.gp = gp
             from gurobipy import GRB
         except ImportError as _err:
             raise ImportError(
@@ -224,6 +225,6 @@ class Gurobi(Solver):
            for i, c in zip(self.model.IISConstr, self.model.getConstrs()):
                 if i == 1:
                     print(c)
-        except self.gurobipy.GurobiError:
+        except self.gp.GurobiError:
             print("The model is feasible!")
         self.model.write(filename)
