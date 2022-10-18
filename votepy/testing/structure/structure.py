@@ -56,14 +56,22 @@ def get_algorithm(algorithm: Union[str, BaseAlgorithm], *args, **kwargs) -> Base
     >>> 
     >>> @algo(name='name')
     ... class Algo(BaseAlgorithm):
+    ...     def __init__(self, arg=0):
+    ...         self.arg = arg
+    ...
     ...     def _solve():
     ...         pass
+    ...     
+    ...     def __eq__(self, rhs):
+    ...         return self.arg == rhs.arg
     >>>
-        get_algorithm('name') == Algo()
+    >>> get_algorithm('name') == Algo()
     True
-        get_algorithm(Algo) == Algo()
+    >>> get_algorithm(Algo) == Algo()
     True
-        get_algorithm(Algo()) == Algo()
+    >>> get_algorithm(Algo()) == Algo()
+    True
+    >>> get_algorithm(Algo(arg=10)) == Algo(arg=10)
     True
     """
 
