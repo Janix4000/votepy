@@ -5,9 +5,10 @@ from typing import Callable, Union
 import inspect
 
 
-implementations: dict[str, dict[str, Callable]] = dict()
 algorithms: dict[str, BaseAlgorithm] = dict()
+default_algorithms: dict[str, BaseAlgorithm] = dict()
 rules: dict[str, Callable] = dict()
+implementations: dict[str, dict[str, Callable]] = dict()
 
 
 def algo(name: str):
@@ -82,7 +83,7 @@ def get_algorithm(algorithm: Union[str, BaseAlgorithm], *args, **kwargs) -> Base
         raise TypeError(f"Algorithm {algorithm} must derive from the `BaseAlgorithm`")
 
 
-def rule(name: str = None):
+def rule(name: str = None, default_algorithm: Union[BaseAlgorithm, str] = None):
     """# Summary
     Decorator used to register a voting rule function.
 
@@ -90,6 +91,7 @@ def rule(name: str = None):
 
     ## Args:
         `name` (str, optional): Identification name of the voting rule. Defaults to the name of the function.
+        `default_algorithm` (BaseAlgorithm | str): Default algorithm class or its identification name. Defaults to None (no default algorithm).
 
     ## Examples
     >>> @rule()
@@ -105,6 +107,8 @@ def rule(name: str = None):
         rule_name = name if name is not None else rule.__name__
         rules[rule_name] = wrapper
         implementations[rule_name] = {}
+        if default_algorithm is not None:
+            default_algorithms[rule_name] = get_algorithm(default_algorithm)
 
         return wrapper
     return actual_decorator
@@ -168,3 +172,15 @@ def get_implementation(rule: Callable, algorithm: BaseAlgorithm) -> Callable:
         raise ValueError(f"Algorithm {algorithm_name} has not been adapted to {rule_name}. Remember to register algorithm usage with `@impl()` decorator.")
 
     return rule_implementations[algorithm_name]
+
+
+def get_default_algorithm(rule: Union[Callable, str]) -> BaseAlgorithm:
+    rule_name = rule if isinstance(rule, str) else rule.__name__
+    if rule_name not in default_algorithms:
+        raise ValueError(f"Rule {rule_name} has not default algorithm/implementation")
+    return default_algorithms[rule_name]
+
+
+def get_default_implementation(rule: Union[Callable, str]) -> Callable:
+    default_algorithm = get_default_algorithm(rule)
+    return get_implementation(rule, default_algorithm)
