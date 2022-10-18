@@ -1,16 +1,17 @@
 from votepy.ordinal_election import OrdinalElection
 
 from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
-from votepy.testing.structure.structure import algo, rule
+from votepy.testing.structure.structure import algo, impl, rule
+from votepy.testing.solve import solve
 
 from typing import Union
 
 
 @algo(name='k_borda')
 class KBorda(BaseAlgorithm):
-    def __init__(self, number_of_scored_candidates: int) -> None:
+    def prepare(self, number_of_scored_candidates: int) -> None:
         self.number_of_scored_candidates = number_of_scored_candidates
-        super().__init__('k_borda')
+        super().prepare()
 
     def _solve(self, voting: OrdinalElection, size_of_committee: int) -> list[int]:
         n = voting.ballot_size
@@ -27,7 +28,7 @@ class KBorda(BaseAlgorithm):
 
 
 @rule()
-def k_borda(voting: Union[OrdinalElection, list[int]], size_of_committee: int, number_of_scored_candidates: int) -> list[int]:
+def k_borda(voting: Union[OrdinalElection, list[int]], size_of_committee: int, number_of_scored_candidates: int, algorithm: KBorda = KBorda()) -> list[int]:
     """Function computes a committee of given size using k-borda rule for specified number of scored candidates.
     In this version for multiple results only arbitrary one is returned.
 
@@ -43,12 +44,21 @@ def k_borda(voting: Union[OrdinalElection, list[int]], size_of_committee: int, n
     Returns:
         OrdinalBallot: List of chosen candidates wrapped in ordinalBallot
     """
+    if not isinstance(voting, OrdinalElection):
+        voting = OrdinalElection(voting)
+
     n = voting.ballot_size
     if number_of_scored_candidates > n or number_of_scored_candidates <= 0:
         raise ValueError(
             f"Number of candidates scored in k-borda needs to be from range 1 to the number of all candidates.")
 
-    algorithm = KBorda(number_of_scored_candidates)
+    return solve(k_borda, voting, size_of_committee, number_of_scored_candidates, algorithm=algorithm)
+
+
+@impl(k_borda, KBorda)
+def k_borda_impl(voting, size_of_committee, number_of_scored_candidates, algorithm: KBorda):
+    algorithm.prepare(number_of_scored_candidates)
+
     return algorithm.solve(voting, size_of_committee)
 
 
