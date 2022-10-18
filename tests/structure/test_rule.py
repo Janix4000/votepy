@@ -1,4 +1,4 @@
-from votepy.testing.structure.structure import rule, rules
+from votepy.structure.structure import rule, rules
 
 
 @rule()

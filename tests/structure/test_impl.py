@@ -1,6 +1,6 @@
 from mock_integration import add, Slow, Fast
 
-from votepy.testing.structure.structure import implementations, get_implementation
+from votepy.structure.structure import implementations, get_implementation
 
 import pytest
 

@@ -1,6 +1,6 @@
 from mock_integration import add, Slow, Fast
 
-from votepy.testing.solve import solve
+from votepy.solve import solve
 
 
 def test_solve():

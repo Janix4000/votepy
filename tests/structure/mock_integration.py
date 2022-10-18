@@ -1,5 +1,5 @@
-from votepy.testing.structure.structure import rule, impl, algo, get_implementation, get_algorithm
-from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
+from votepy.structure.structure import rule, impl, algo, get_implementation, get_algorithm
+from votepy.algorithms.base_algorithm import BaseAlgorithm
 
 
 @algo(name="slow")

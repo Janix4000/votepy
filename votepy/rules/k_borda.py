@@ -1,8 +1,8 @@
 from votepy.ordinal_election import OrdinalElection
 
-from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
-from votepy.testing.structure.structure import algo, impl, rule
-from votepy.testing.solve import solve
+from votepy.algorithms.base_algorithm import BaseAlgorithm
+from votepy.structure.structure import algo, impl, rule
+from votepy.solve import solve
 
 from typing import Union
 

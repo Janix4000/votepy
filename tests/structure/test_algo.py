@@ -1,5 +1,5 @@
 from re import A
-from votepy.testing.structure.structure import algo, algorithms
+from votepy.structure.structure import algo, algorithms
 
 
 @algo(name="name")

@@ -1,4 +1,4 @@
-from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
+from votepy.algorithms.base_algorithm import BaseAlgorithm
 
 from functools import wraps
 from typing import Callable, Union
@@ -20,7 +20,7 @@ def algo(name: str):
         `name` (str): Identification name of the algorithm.
 
     ## Examples
-    >>> from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
+    >>> from votepy.algorithms.base_algorithm import BaseAlgorithm
     >>> 
     >>> @algo(name='name')
     ... class Algo(BaseAlgorithm):
@@ -52,7 +52,7 @@ def get_algorithm(algorithm: Union[str, BaseAlgorithm], *args, **kwargs) -> Base
         -> BaseAlgorithm: Ready to use algorithm object. If the given algorithm is already an object, it is passed by.
 
     ## Examples
-    >>> from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
+    >>> from votepy.algorithms.base_algorithm import BaseAlgorithm
     >>> 
     >>> @algo(name='name')
     ... class Algo(BaseAlgorithm):
@@ -133,7 +133,7 @@ def impl(rule: Union[Callable, str], algorithm: BaseAlgorithm):
         `algorithm` (BaseAlgorithm): Algorithm class or its identification name
 
     ## Examples
-    >>> from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
+    >>> from votepy.algorithms.base_algorithm import BaseAlgorithm
     >>> 
     >>> @algo(name='name')
     ... class Algo(BaseAlgorithm):
@@ -182,7 +182,7 @@ def get_implementation(rule: Union[Callable, str], algorithm: BaseAlgorithm) -> 
         -> Callable: Implementation of the given rule, using algorithm to find a committee
 
     ## Examples
-    >>> from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
+    >>> from votepy.algorithms.base_algorithm import BaseAlgorithm
     >>> 
     >>> @algo(name='name')
     ... class Algo(BaseAlgorithm):
@@ -235,7 +235,7 @@ def get_default_algorithm(rule: Union[Callable, str]) -> BaseAlgorithm:
         -> BaseAlgorithm: Default algorithm
 
     ## Examples
-    >>> from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
+    >>> from votepy.algorithms.base_algorithm import BaseAlgorithm
     >>> 
     >>> @algo(name='name')
     ... class Algo(BaseAlgorithm):
@@ -270,7 +270,7 @@ def get_default_implementation(rule: Union[Callable, str]) -> Callable:
         -> Callable: Implementation of the given rule, using default algorithm to find a committee
 
     ## Examples
-    >>> from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
+    >>> from votepy.algorithms.base_algorithm import BaseAlgorithm
     >>> 
     >>> @algo(name='name')
     ... class Algo(BaseAlgorithm):

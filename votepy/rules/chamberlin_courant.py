@@ -1,9 +1,9 @@
 from votepy.ordinal_election import OrdinalElection
 
-from votepy.testing.structure.structure import rule, get_implementation, impl
-from votepy.testing.algorithms.base_algorithm import BaseAlgorithm
-from votepy.testing.algorithms.generic_brute_force import BruteForce
-from votepy.testing.algorithms.generic_greedy import Greedy
+from votepy.structure.structure import rule, get_implementation, impl
+from votepy.algorithms.base_algorithm import BaseAlgorithm
+from votepy.algorithms.generic_brute_force import BruteForce
+from votepy.algorithms.generic_greedy import Greedy
 
 from typing import Union, Iterable
 
