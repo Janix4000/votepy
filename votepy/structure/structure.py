@@ -1,8 +1,10 @@
 from votepy.algorithms.base_algorithm import BaseAlgorithm
 
 from functools import wraps
-from typing import Callable, Union
+from typing import Callable, Iterable, Union
 import inspect
+
+from votepy.ordinal_election import OrdinalElection
 
 
 algorithms: dict[str, BaseAlgorithm] = dict()
@@ -109,8 +111,10 @@ def rule(name: str = None, default_algorithm: Union[BaseAlgorithm, str] = None):
 
     def actual_decorator(rule: Callable):
         @wraps(rule)
-        def wrapper(*args, **kwargs):
-            return rule(*args, **kwargs)
+        def wrapper(voting, size_of_committee, *args, **kwargs):
+            if not isinstance(voting, OrdinalElection) and isinstance(voting, Iterable):
+                voting = OrdinalElection(voting)
+            return rule(voting, size_of_committee, *args, **kwargs)
 
         rule_name = name if name is not None else rule.__name__
         rules[rule_name] = wrapper

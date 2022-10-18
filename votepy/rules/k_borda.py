@@ -44,9 +44,6 @@ def k_borda(voting: Union[OrdinalElection, list[int]], size_of_committee: int, n
     Returns:
         OrdinalBallot: List of chosen candidates wrapped in ordinalBallot
     """
-    if not isinstance(voting, OrdinalElection):
-        voting = OrdinalElection(voting)
-
     n = voting.ballot_size
     if number_of_scored_candidates > n or number_of_scored_candidates <= 0:
         raise ValueError(

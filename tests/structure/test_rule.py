@@ -17,8 +17,6 @@ def test_auto_name_rule():
     assert "auto_name_rule" in rules
     assert rules["auto_name_rule"].__doc__ == """auto_name_rule"""
     assert rules["auto_name_rule"].__name__ == "auto_name_rule"
-    assert rules["auto_name_rule"](x=None, y=None) == (None, None)
-    assert rules["auto_name_rule"](None, None) == (None, None)
 
 
 def test_custom_name_rule():
@@ -26,5 +24,3 @@ def test_custom_name_rule():
     assert "custom_name_rule" not in rules
     assert rules["custom_name"].__doc__ == """custom_name_rule"""
     assert rules["custom_name"].__name__ == "custom_name_rule"
-    assert rules["custom_name"](x=None, y=None) == (None, None)
-    assert rules["custom_name"](None, None) == (None, None)
