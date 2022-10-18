@@ -165,6 +165,6 @@ def get_implementation(rule: Callable, algorithm: BaseAlgorithm) -> Callable:
     rule_implementations = implementations[rule_name]
 
     if algorithm_name not in rule_implementations:
-        raise ValueError(f"Algorithm {algorithm_name} has not been adapted to {rule_name}. Remember to register algorithm use with `@impl()` decorator.")
+        raise ValueError(f"Algorithm {algorithm_name} has not been adapted to {rule_name}. Remember to register algorithm usage with `@impl()` decorator.")
 
     return rule_implementations[algorithm_name]
