@@ -22,7 +22,8 @@ class Generator:
                     uniform.rvs(loc=0, scale=b, size=num_candidates))))
 
             voters_list.append(list(
-                zip(uniform.rvs(loc=0, scale=a, size=num_voters), uniform.rvs(loc=0, scale=b, size=num_voters))))
+                zip(uniform.rvs(loc=0, scale=a, size=num_voters),
+                    uniform.rvs(loc=0, scale=b, size=num_voters))))
 
         return candidates_list, voters_list
 
@@ -36,7 +37,7 @@ class Generator:
             voters_list.append(list(
                 zip(norm.rvs(loc=mean, scale=sigma, size=num_voters),
                     norm.rvs(loc=mean, scale=sigma, size=num_voters))))
-        return candidates_list, voters_list
+        return np.array(candidates_list), np.array(voters_list)
 
     def two_overlapping_circles(self, num_candidates, num_voters, r1=5, o1=(-4, 0), r2=5, o2=(4, 0)):
         candidates_list, voters_list = [], []
@@ -73,7 +74,7 @@ class Generator:
             y_voters = o2[1] + (r * np.sin(theta))
 
             voters_list[i_samples].extend(list(zip(x_voters, y_voters)))
-        return candidates_list, voters_list
+        return np.array(candidates_list), np.array(voters_list)
 
 
 def data_to_voting(voting_algorithm, data, **kwargs):
@@ -90,55 +91,59 @@ def data_to_voting(voting_algorithm, data, **kwargs):
             def squared_dist(p1):
                 return (voter[0] - p1[0]) ** 2 + (voter[1] - p1[1]) ** 2
 
-            # print(voter, sorted(candidates_list[i_sample], key=squared_dist))
-            # plt.scatter(voter[0], voter[1], color = "blue")
-            # xs, ys = zip(*sorted(candidates_list[i_sample], key=squared_dist))
-            # plt.scatter(xs, ys, c=[squared_dist((x, y)) for x, y in zip(xs, ys)], cmap='Reds')
-            # plt.show()
             votings[i_sample].append(
                 [mapping[(i_sample, x)] for x in sorted(candidates_list[i_sample], key=squared_dist)])
 
     result = []
     for i_sample, voting in enumerate(votings):
         result.append([mapping[(i_sample, x)] for x in voting_algorithm(voting, **kwargs)])
-    return result
+    return np.array(result)
 
 
-class Vizualizator:
+class Visualizator:
     def __init__(self, votings_results, data):
         self.votings_results = votings_results
         self.data = data
 
-    def vizualize_results(self):
+    def visualize_results(self):
         xs_winners, ys_winners = [], []
         xs_voters, ys_voters = [], []
         xs_candidates, ys_candidates = [], []
 
-        voters, candidates = data
+        voters, candidates = self.data
+
+        def alpha_parameter(k=0.7):
+            size = np.product(np.array(voters).shape) + np.product(np.array(candidates).shape) + np.product(self.votings_results.shape)
+            return k/min(1.4, np.log10(size)+0.1)
+
+        # print(alpha_parameter())
 
         for x in voters:
             for q in x:
                 xs_voters.append(q[0])
                 ys_voters.append(q[1])
-        plt.scatter(xs_voters, ys_voters, color="#e56b6f", s=1)
+        fig = plt.figure()
+        plt.scatter(xs_voters, ys_voters, color="#e56b6f", s=1, alpha=alpha_parameter(), zorder=0)
 
         for x in candidates:
             for q in x:
                 xs_candidates.append(q[0])
                 ys_candidates.append(q[1])
-        plt.scatter(xs_candidates, ys_candidates, color="#48cae4", s=1)
+        plt.scatter(xs_candidates, ys_candidates, color="#48cae4", s=1, alpha=alpha_parameter(), zorder=0)
 
         for voting_result in self.votings_results:
             for p in voting_result:
                 xs_winners.append(p[0])
                 ys_winners.append(p[1])
-        plt.scatter(xs_winners, ys_winners, color="green", s=5)
+        plt.scatter(xs_winners, ys_winners, color="green", s=5, alpha=0.4, zorder=1)
+        plt.legend(["Voters", "Not chosen candidates", "chosen candidates"], framealpha=1, loc=(0, -0.3))
+        fig.tight_layout()
         plt.show()
 
 
 if __name__ == "__main__":
-    generator = Generator(num_sampling=100)
+    generator = Generator(num_sampling=1000)
     data = generator.uniform_rectangle(200, 200, a=3, b=3)
-    results = data_to_voting(k_borda, data, size_of_committee=15, number_of_scored_candidates=3)
-    vis = Vizualizator(results, data)
-    vis.vizualize_results()
+    results = data_to_voting(bloc, data, size_of_committee=15, number_of_scored_candidates=3)
+    vis = Visualizator(results, data)
+    vis.visualize_results()
