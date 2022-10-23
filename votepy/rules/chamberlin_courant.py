@@ -41,7 +41,7 @@ def chamberlin_courant(voting: Union[OrdinalElection, list[int]], size_of_commit
 
 def scoring_function(committee: Iterable[int], voting: OrdinalElection) -> float:
     """# Summary
-    Scoring function for Chamberlin-Courant rule. Calculates score for the given committee, under CC rule and given voting.ballot_size
+    Scoring function for Chamberlin-Courant rule. Calculates score for the given committee, under CC rule and given voting
 
     ## Args:
         `committee` (Iterable[int]): Chosen committee
