@@ -77,8 +77,7 @@ def chamberlin_courant_greedy(voting, size_of_committee, algorithm: Greedy = Gre
     return algorithm.solve(voting, size_of_committee)
 
 
-def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[int]], size_of_committee: int,
-                           number_of_scored_candidates: int, solver: Union[Type[Gurobi], Type[CPLEX]] = Gurobi) -> list[int]:
+def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[int]], size_of_committee: int, solver: Union[Type[Gurobi], Type[CPLEX]] = Gurobi) -> list[int]:
     """Implementation of the chamberlin-courant rule, using ILP formulation by:
     Peters, Dominik & Lackner, Martin. (2020).
     Preferences Single-Peaked on a Circle.
@@ -125,8 +124,7 @@ def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[int]], size_of_co
     return best_committee
 
 
-def chamberlin_courant_ilp_custom(voting: Union[OrdinalElection, list[int]], size_of_committee: int,
-                                  number_of_scored_candidates: int, solver: Union[Type[Gurobi], Type[CPLEX]] = Gurobi) -> list[int]:
+def chamberlin_courant_ilp_custom(voting: Union[OrdinalElection, list[int]], size_of_committee: int, solver: Union[Type[Gurobi], Type[CPLEX]] = Gurobi) -> list[int]:
     """Custom implementation of the chamberlin courant rule.
 
     Args:
@@ -203,7 +201,6 @@ if __name__ == '__main__':
         chamberlin_courant_ilp(
             election,
             2,
-            5,
             Gurobi
         )
     )
@@ -212,7 +209,6 @@ if __name__ == '__main__':
         chamberlin_courant_ilp(
             election,
             2,
-            5,
             CPLEX
         )
     )
@@ -221,7 +217,6 @@ if __name__ == '__main__':
         chamberlin_courant_ilp_custom(
             election,
             2,
-            5,
             Gurobi
         )
     )
@@ -230,7 +225,6 @@ if __name__ == '__main__':
         chamberlin_courant_ilp_custom(
             election,
             2,
-            5,
             CPLEX
         )
     )
