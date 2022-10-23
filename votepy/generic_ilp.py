@@ -18,7 +18,7 @@ class Solver(ABC):
             vartype (str): Type of the variable ('B' - Binary, 'C' - continuous, 'I' - Integer)
             obj (Optional[float]): Coefficient at the variable in the objective function, default is 0.
             lb (Optional[float]): Lower bound of the variable, defaults are dictated by the solver.
-            ub (Optional[float]): Upper bound of the variable, defaults are dictaded by the solver.
+            ub (Optional[float]): Upper bound of the variable, defaults are dictated by the solver.
         Returns:
             vartype: An object representing the variable in the selected solver. 
             It has to be used in the 'variables' arg in the addConstraint method
@@ -28,17 +28,17 @@ class Solver(ABC):
     @abstractmethod
     def addConstraint(self, name: str, variables: list[object], coeffs: list[float], rhs: float, sense: str):
         """Add a constraint to the model.
-        
+
         In general, the constraints have to be in the form of:
         <linear combination of variables> < 'L'|'G'|'E' > <independent part of the expression>
         , where 'L'|'G'|'E' are 'less than or equal' | 'greater than or equal' | 'equal' respectively.
-        
+
         For example:
-        
+
         2*x1 + 3*x2 >= 8
-        
+
         would be created by:
-        
+
         model.addConstraint('example', [x1, x2], [2, 3], 8, 'G')
 
         Args:
@@ -72,14 +72,14 @@ class CPLEX(Solver):
             raise ImportError(
                 "Failed to import CPLEX, please make sure that you have CPLEX installed")
 
-        self.colnames = []
+        self.col_names = []
         self.obj = []
         self.lb = []
         self.ub = []
         self.ctypes = []
 
         self.rhs = []
-        self.rownames = []
+        self.row_names = []
         self.senses = []
         self.rows = []
 
@@ -94,7 +94,7 @@ class CPLEX(Solver):
             self.model.objective.set_sense(self.model.objective.sense.minimize)
 
     def addVariable(self, name: str, vartype: str, obj: float = 0.0, lb: Optional[float] = None, ub: Optional[float] = None):
-        self.colnames.append(name)
+        self.col_names.append(name)
         self.obj.append(obj)
         if lb is not None:
             self.lb.append(lb)
@@ -104,7 +104,7 @@ class CPLEX(Solver):
         return name
 
     def addConstraint(self, name: str, variables: list[object], coeffs: list[float], rhs: float, sense: str):
-        self.rownames.append(name)
+        self.row_names.append(name)
         self.rows.append([variables, coeffs])
         self.rhs.append(rhs)
         self.senses.append(sense)
@@ -114,12 +114,12 @@ class CPLEX(Solver):
             if len(self.lb) > 0 or len(self.ub) > 0:
                 warn("Warning: You've given bounds for some variables but not for all - please make sure you either set bounds for every variable or for none.\nUsing default bounds...")
             self.model.variables.add(obj=self.obj, types=''.join(
-                self.ctypes), names=self.colnames)
+                self.ctypes), names=self.col_names)
         else:
             self.model.variables.add(obj=self.obj, lb=self.lb, ub=self.ub, types=''.join(
-                self.ctypes), names=self.colnames)
+                self.ctypes), names=self.col_names)
         self.model.linear_constraints.add(lin_expr=self.rows, senses=''.join(
-            self.senses), rhs=self.rhs, names=self.rownames)
+            self.senses), rhs=self.rhs, names=self.row_names)
         self.model.solve()
 
     def getValues(self):
@@ -132,7 +132,7 @@ class Gurobi(Solver):
         try:
             import gurobipy as gp
             from gurobipy import GRB
-        except ImportError as err:
+        except ImportError as _err:
             raise ImportError(
                 "Failed to import Gurobi, please make sure that you have Gurobi installed")
 
@@ -143,7 +143,7 @@ class Gurobi(Solver):
         env.start()
 
         self.model = gp.Model(env=env)
-        self.vartypemap = {
+        self.var_type_map = {
             'C': GRB.CONTINUOUS,
             'B': GRB.BINARY,
             'I': GRB.INTEGER
@@ -155,8 +155,8 @@ class Gurobi(Solver):
         elif sense == Solver.Sense.MIN:
             self.sense = GRB.MINIMIZE
 
-    def addVariable(self, name: str, vartype: str, obj: Optional[float] = None, lb: Optional[float] = None, ub: Optional[float] = None):
-        var = self.model.addVar(vtype=self.vartypemap[vartype], name=name)
+    def addVariable(self, name: str, var_type: str, obj: Optional[float] = None, lb: Optional[float] = None, ub: Optional[float] = None):
+        var = self.model.addVar(vtype=self.var_type_map[var_type], name=name)
         if lb is not None:
             self.model.addConstr(var >= lb, name+'_lb')
         if ub is not None:
