@@ -123,19 +123,19 @@ class Visualizator:
                 xs_voters.append(q[0])
                 ys_voters.append(q[1])
         fig = plt.figure()
-        plt.scatter(xs_voters, ys_voters, color="#e56b6f", s=1, alpha=alpha_parameter(), zorder=0)
+        plt.scatter(xs_voters, ys_voters, color=(0.9, 0.9, 0.9), s=1, alpha=alpha_parameter()/10, zorder=0)
 
         for x in candidates:
             for q in x:
                 xs_candidates.append(q[0])
                 ys_candidates.append(q[1])
-        plt.scatter(xs_candidates, ys_candidates, color="#48cae4", s=1, alpha=alpha_parameter(), zorder=0)
+        plt.scatter(xs_candidates, ys_candidates, color=(0.9, 0.9, 0.9), s=1, alpha=alpha_parameter()/10, zorder=0)
 
         for voting_result in self.votings_results:
             for p in voting_result:
                 xs_winners.append(p[0])
                 ys_winners.append(p[1])
-        plt.scatter(xs_winners, ys_winners, color="green", s=5, alpha=0.4, zorder=1)
+        plt.scatter(xs_winners, ys_winners, color=(0.25, 0.25, 0.25), s=5, alpha=0.02, zorder=1)
         plt.legend(["Voters", "Not chosen candidates", "chosen candidates"], framealpha=1, loc=(0, -0.3))
         fig.tight_layout()
         plt.show()
