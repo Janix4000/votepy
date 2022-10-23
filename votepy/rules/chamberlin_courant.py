@@ -1,3 +1,6 @@
+import collections
+
+from votepy.algorithms.p_algorithm import PAlgorithm
 from votepy.ordinal_election import OrdinalElection
 
 from votepy.structure.structure import rule, impl
@@ -12,7 +15,8 @@ from typing import Type, Union, Iterable
 
 
 @rule()
-def chamberlin_courant(voting: Union[OrdinalElection, list[int]], size_of_committee: int, algorithm: BaseAlgorithm) -> list[int]:
+def chamberlin_courant(voting: Union[OrdinalElection, list[int]], size_of_committee: int, algorithm: BaseAlgorithm) -> \
+list[int]:
     """# Summary
     Chamberlin-Courant rule
     ## Args:
@@ -77,6 +81,33 @@ def chamberlin_courant_greedy(voting, size_of_committee, algorithm: Greedy = Gre
     return algorithm.solve(voting, size_of_committee)
 
 
+
+# Based on https://arxiv.org/abs/1901.09217
+@impl(chamberlin_courant, PAlgorithm)
+def chamberlin_courant_p_algorithm(voting: Union[OrdinalElection, list[int]], size_of_committee: int,
+                                   algorithm: PAlgorithm = PAlgorithm()) -> list[int]:
+    def scoring_function(voting: OrdinalElection, size_of_committee: int, threshold: int) -> list[int]:
+        scores = collections.defaultdict(int)
+        winners = []
+        vs = [v[:threshold] for v in voting]
+        for vote in vs:
+            for candidate in vote:
+                scores[candidate] += 1
+        for _ in range(size_of_committee):
+            best_candidate = max((val, key) for key, val in scores.items())[1]
+
+            for idx, cs in enumerate(vs):
+                if best_candidate in cs:
+                    for c in cs:
+                        scores[c] -= 1
+                    vs[idx] = []
+            del scores[best_candidate]
+            winners.append(best_candidate)
+        return winners
+
+    algorithm.prepare(scoring_function)
+    return algorithm.solve(voting, size_of_committee)
+    
 def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[int]], size_of_committee: int, solver: Union[Type[Gurobi], Type[CPLEX]] = Gurobi) -> list[int]:
     """Implementation of the chamberlin-courant rule, using ILP formulation by:
     Peters, Dominik & Lackner, Martin. (2020).
@@ -166,6 +197,7 @@ def chamberlin_courant_ilp_custom(voting: Union[OrdinalElection, list[int]], siz
     return best_committee
 
 
+
 if __name__ == '__main__':
     election = OrdinalElection([
         [0, 1, 2, 3, 4],
@@ -196,6 +228,15 @@ if __name__ == '__main__':
             algorithm=Greedy()
         )
     )
+    print(
+
+        chamberlin_courant(
+            election,
+            2,
+            algorithm=PAlgorithm()
+        )
+    )
+
     print(
         "ILP article(Gurobi):",
         chamberlin_courant_ilp(
