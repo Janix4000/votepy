@@ -7,7 +7,7 @@ from votepy.solve import solve
 
 @algo(name='greedy_monroe')
 class GreedyMonroe(BaseAlgorithm):
-    def _solve(voting: Union[OrdinalElection, list[int]], size_of_committee: int) -> list[int]:
+    def _solve(self, voting: Union[OrdinalElection, list[int]], size_of_committee: int) -> list[int]:
         m_candidates = voting.ballot_size
         n_votes = len(voting)
         if size_of_committee > m_candidates or size_of_committee <= 0:
@@ -69,11 +69,12 @@ def greedy_monroe(voting: Union[OrdinalElection, list[int]], size_of_committee: 
     Returns:
         OrdinalBallot: List of chosen candidates wrapped in ordinalBallot
     """
-    solve(greedy_monroe, voting, size_of_committee, algorithm=algorithm)
+    return solve(greedy_monroe, voting, size_of_committee, algorithm=algorithm)
 
 
 @impl(greedy_monroe, GreedyMonroe)
 def greedy_monroe_impl(voting, size_of_committee, algorithm: GreedyMonroe):
+    algorithm.prepare()
     return algorithm.solve(voting, size_of_committee)
 
 

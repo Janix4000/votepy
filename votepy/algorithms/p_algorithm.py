@@ -8,6 +8,11 @@ from votepy.structure.structure import algo, BaseAlgorithm
 
 @algo(name='p_algorithm')
 class PAlgorithm(BaseAlgorithm):
+    def __init__(self):
+        """An algorithm that calculates the winning committee using a scoring function given in votepy/chamberlin_courant.py.
+        Algorithm based on https://doi.org/10.1016/j.artint.2015.01.003
+        """
+        super().__init__()
     def simple_score(self, p, C):
         if not p:
             return -1
