@@ -80,7 +80,7 @@ def greedy_monroe(voting: Union[OrdinalElection, list[int]], size_of_committee: 
     ... [2, 4, 1, 3, 0]
     ... ]
     >>> size_of_committee = 2
-    >>> committee = greedy_monroe(voting, size_of_committee)
+    >>> greedy_monroe(voting, size_of_committee)
     [1, 2]
     """
     return solve(greedy_monroe, voting, size_of_committee, algorithm=algorithm)
