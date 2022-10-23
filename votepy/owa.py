@@ -11,6 +11,14 @@ def owa_ilp(voting,
             size_of_committee,
             owa_vector,
             solver: Union[Type[Gurobi], Type[CPLEX]] = CPLEX):
+    """
+    ILP implementation of the OWA rule as described by:
+    Piotr Skowron, Piotr Faliszewski, Jerome Lang
+    Finding a Collective Set of Items: From Proportional Multirepresentation to Group Recommendation
+	arXiv:1402.3044
+
+    Variables are named exactly as in the paper, to make cross-checking easier.
+    """
     if not isinstance(voting, OrdinalElection):
         voting = OrdinalElection(voting)
     # model = solver(Solver.Sense.MIN)
