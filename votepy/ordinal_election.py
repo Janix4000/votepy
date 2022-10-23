@@ -42,6 +42,9 @@ class OrdinalBallot(list):
                 f"The candidates must be from the range [0, <ordering_length>-1]. Found {candidate}")
         return self.__pos[candidate]
 
+    def get_positions(self):
+        return [self.pos(i) for i in range(len(self))]
+
 
 class OrdinalElection(list):
     def __init__(self, preference_orders: Iterable[Iterable[int]], mapping: Sequence = None):
@@ -66,6 +69,9 @@ class OrdinalElection(list):
 
     def __str__(self) -> str:
         return "\n".join(map(str, self))
+
+    def get_positions(self):
+        return [ballot.get_positions() for ballot in self]
 
 
 if __name__ == '__main__':
