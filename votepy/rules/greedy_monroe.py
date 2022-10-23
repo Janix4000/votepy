@@ -21,19 +21,23 @@ class GreedyMonroe(BaseAlgorithm):
                     mapping[i][vs[i][j]] = m_candidates - j - 1
             return mapping
 
+
         mapping = map_votes(voting)
         kk = size_of_committee
         curr_candidates = set(range(m_candidates))
 
         n = n_votes
 
+        def calculate_score(mapping, candidate):
+            return [(j, mapping[j][candidate]) for j in range(n_votes) if mapping[j] is not None]
+
         for i in range(size_of_committee):
             curr_size = n // kk
             best_score, best_candidate = -1, -1
             best_votes, best_candidate_voters = None, None
             for candidate in curr_candidates:
-                calculate_scoring = [(j, mapping[j][candidate]) for j in range(n_votes) if mapping[j] is not None]
-                votes, scores = zip(*(sorted(calculate_scoring, key=lambda x: -x[1])[:curr_size]))
+                scoring = calculate_score(mapping, candidate)
+                votes, scores = zip(*(sorted(scoring, key=lambda x: -x[1])[:curr_size]))
                 summed_score = sum(scores)
                 if summed_score > best_score:
                     best_score = summed_score
@@ -68,6 +72,16 @@ def greedy_monroe(voting: Union[OrdinalElection, list[int]], size_of_committee: 
 
     Returns:
         OrdinalBallot: List of chosen candidates wrapped in ordinalBallot
+
+    Examples:
+    >>> voting = [
+    ... [1, 0, 2, 3, 4],
+    ... [3, 2, 4, 1, 0],
+    ... [2, 4, 1, 3, 0]
+    ... ]
+    >>> size_of_committee = 2
+    >>> committee = greedy_monroe(voting, size_of_committee)
+    [1, 2]
     """
     return solve(greedy_monroe, voting, size_of_committee, algorithm=algorithm)
 
