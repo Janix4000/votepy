@@ -129,12 +129,6 @@ class CPLEX(Solver):
             self.model.variables.add(obj=self.obj, types=''.join(
                 self.ctypes), names=self.col_names)
         else:
-<<<<<<< HEAD
-            self.model.variables.add(obj=self.obj, lb=self.lb, ub=self.ub, types=''.join(
-                self.ctypes), names=self.col_names)
-        self.model.linear_constraints.add(lin_expr=self.rows, senses=''.join(
-            self.senses), rhs=self.rhs, names=self.row_names)
-=======
             self.model.variables.add(obj=self.obj,
                                      lb=self.lb,
                                      ub=self.ub,
@@ -145,7 +139,6 @@ class CPLEX(Solver):
                                           senses=''.join(self.senses),
                                           rhs=self.rhs,
                                           names=self.rownames)
->>>>>>> 7f1707f (Some more formatting)
         self.model.solve()
 
     def getValues(self):

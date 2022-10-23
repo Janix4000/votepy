@@ -1,8 +1,8 @@
 from typing import Type, Union
-from ordinal_election import OrdinalElection
-from generic_ilp import CPLEX, Gurobi, Solver
-from chamberlin_courant import chamberlin_courant_ilp_custom, chamberlin_courant_ilp
-from k_borda import k_borda
+from votepy.ordinal_election import OrdinalElection
+from votepy.generic_ilp import CPLEX, Gurobi, Solver
+from votepy.rules.chamberlin_courant import chamberlin_courant_ilp_custom, chamberlin_courant_ilp
+from votepy.rules.k_borda import k_borda
 
 
 import numpy as np
@@ -19,7 +19,6 @@ def owa_ilp(voting, size_of_committee, owa_vector, solver: Union[Type[Gurobi], T
     K = size_of_committee
 
     u = voting.get_positions()
-    u = voting.inverse_ordering()
     for i in range(N):
         for j in range(M):
             # In OWA-based rules, [u] is treated as the utility provided to the voter - the bigger the better
@@ -80,7 +79,7 @@ if __name__ == '__main__':
         [5,0,3,2,4,1],
         [4,3,1,2,5,0]
     ]
-    print(chamberlin_courant_ilp(m, 3, 6))
+    print(chamberlin_courant_ilp(m, 3))
     print(owa_ilp(m, 3, [1,0,0], solver=Gurobi))
     print(owa_ilp(m, 3, [1,1,1], solver=Gurobi))
-    print(k_borda(m, 3, 6))
+    print(k_borda(m, 3))
