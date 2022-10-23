@@ -29,7 +29,7 @@ class PAlgorithm(BaseAlgorithm):
         """Prepare the scoring function. Should be invoked only by the voting rule function.
 
         Args:
-            `scoring_function` (`(Iterable[int], int, int) -> int`): The scoring function used to determine the best committee. It should take the committee, election and candidate as parameters and return the score of that committee.
+            `scoring_function` (`(Iterable[int], int, int) -> int`): The scoring function used to determine the best committee. It should take the committee, election and threshold as the parameters and return the score of that committee.
         """
         self.scoring_function = scoring_function
         super().prepare()
