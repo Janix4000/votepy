@@ -86,7 +86,7 @@ def chamberlin_courant_greedy(voting, size_of_committee, algorithm: Greedy = Gre
 @impl(chamberlin_courant, PAlgorithm)
 def chamberlin_courant_p_algorithm(voting: Union[OrdinalElection, list[int]], size_of_committee: int,
                                    algorithm: PAlgorithm = PAlgorithm()) -> list[int]:
-    def p_algorithm_basic(voting: OrdinalElection, size_of_committee: int, threshold: int) -> list[int]:
+    def scoring_function(voting: OrdinalElection, size_of_committee: int, threshold: int) -> list[int]:
         scores = collections.defaultdict(int)
         winners = []
         vs = [v[:threshold] for v in voting]
@@ -105,7 +105,7 @@ def chamberlin_courant_p_algorithm(voting: Union[OrdinalElection, list[int]], si
             winners.append(best_candidate)
         return winners
 
-    algorithm.prepare(p_algorithm_basic)
+    algorithm.prepare(scoring_function)
     return algorithm.solve(voting, size_of_committee)
     
 def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[int]], size_of_committee: int, solver: Union[Type[Gurobi], Type[CPLEX]] = Gurobi) -> list[int]:
