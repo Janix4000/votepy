@@ -75,9 +75,9 @@ def greedy_monroe(voting: Union[OrdinalElection, list[int]], size_of_committee: 
 
     Examples:
     >>> voting = [
-    ... [1, 0, 2, 3, 4],
-    ... [3, 2, 4, 1, 0],
-    ... [2, 4, 1, 3, 0]
+    ...     [1, 0, 2, 3, 4],
+    ...     [3, 2, 4, 1, 0],
+    ...     [2, 4, 1, 3, 0]
     ... ]
     >>> size_of_committee = 2
     >>> greedy_monroe(voting, size_of_committee)
