@@ -1,8 +1,8 @@
-from ordinal_election import OrdinalElection
+from votepy.ordinal_election import OrdinalElection
 from typing import Type, Union, Iterable
-from generic_brute_force import brute_force
-from generic_greed import greedy
-from generic_ilp import CPLEX, Gurobi
+from votepy.generic_brute_force import brute_force
+from votepy.generic_greed import greedy
+from votepy.generic_ilp import CPLEX, Gurobi
 
 
 def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[int]], size_of_committee: int,
