@@ -82,9 +82,16 @@ def owa_ilp(voting,
 
 
 if __name__ == '__main__':
-    m = [[0, 1, 2, 4, 5, 3], [0, 1, 2, 4, 5, 3], [0, 1, 2, 4, 5, 3],
-         [5, 0, 3, 2, 4, 1], [5, 0, 3, 2, 4, 1], [4, 3, 1, 2, 5, 0]]
-    print(chamberlin_courant_ilp(m, 3))
-    print(owa_ilp(m, 3, [1, 0, 0], solver=Gurobi))
-    print(owa_ilp(m, 3, [1, 1, 1], solver=Gurobi))
-    print(k_borda(m, 3))
+    voting = [
+       [0, 1, 2, 4, 5, 3], 
+       [0, 1, 2, 4, 5, 3], 
+       [0, 1, 2, 4, 5, 3],
+       [5, 0, 3, 2, 4, 1], 
+       [5, 0, 3, 2, 4, 1], 
+       [4, 3, 1, 2, 5, 0]
+    ]
+    size_of_committee = 3
+    print(chamberlin_courant_ilp(voting, size_of_committee))
+    print(owa_ilp(voting, size_of_committee, [1, 0, 0], solver=Gurobi))
+    print(owa_ilp(voting, size_of_committee, [1, 1, 1], solver=Gurobi))
+    print(k_borda(voting, size_of_committee))
