@@ -21,7 +21,7 @@ class PAlgorithm(BaseAlgorithm):
 
     def prepare(self, scoring_function: Callable[[Iterable[int], int, int], list[int]]):
         self.scoring_function = scoring_function
-        self._prepare()
+        super().prepare()
 
     def _solve(self, voting: OrdinalElection, size_of_committee: int) -> list[int]:
         num_candidates = voting.ballot_size
