@@ -234,7 +234,10 @@ if __name__ == '__main__':
             election,
             2,
             algorithm=PAlgorithm()
+        )
+    )
 
+    print(
         "ILP article(Gurobi):",
         chamberlin_courant_ilp(
             election,
