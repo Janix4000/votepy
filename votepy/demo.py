@@ -11,7 +11,7 @@ if __name__ == "__main__":
     data3 = generator.two_overlapping_circles(50, 50)
 
     for idx, (name, data) in enumerate(
-            [("Uniform Rectangle", data1), ("Normal Distribution", data2), ("Two Overlaping Circles", data3)]):
+            [("Uniform Rectangle", data1), ("Normal Distribution", data2), ("Two Overlapping Circles", data3)]):
         for algo in [k_borda, bloc, sntv]:
             results = data_to_voting(algo, data, size_of_committee=10)
             vis = Visualizator(results, data)
