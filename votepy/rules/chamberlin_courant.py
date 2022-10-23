@@ -1,3 +1,5 @@
+import collections
+from votepy.generic_p_algorithm import PAlgorithm
 from votepy.ordinal_election import OrdinalElection
 
 from votepy.structure.structure import rule, get_implementation, impl
@@ -56,6 +58,33 @@ def chamberlin_courant_greedy(voting, size_of_committee, number_of_scored_candid
     return greedy.solve(voting, size_of_committee)
 
 
+@impl(chamberlin_courant, PAlgorithm)
+def chamberlin_courant_p_algorithm(voting, size_of_committee, number_of_scored_candidates, algorithm: PAlgorithm) -> list[int]:
+
+    def scoring_function(voting: OrdinalElection, size_of_committee: int, threshold: int):
+        scores = collections.defaultdict(int)
+        winners = []
+        vs = [v[:threshold] for v in voting]
+        for vote in vs:
+            for candidate in vote:
+                scores[candidate] += 1
+        for _ in range(size_of_committee):
+            best_candidate = max((val, key) for key, val in scores.items())[1]
+
+            for idx, cs in enumerate(vs):
+                if best_candidate in cs:
+                    for c in cs:
+                        scores[c] -= 1
+                    vs[idx] = []
+            del scores[best_candidate]
+            winners.append(best_candidate)
+        return winners
+
+    algorithm.prepare(scoring_function)
+
+    return algorithm.solve(voting, size_of_committee)
+
+
 if __name__ == '__main__':
     election = OrdinalElection([
         [0, 1, 2, 3, 4],
@@ -71,7 +100,9 @@ if __name__ == '__main__':
         3: 'd',
         4: 'e',
     })
+
     print(election)
+
     print(
         chamberlin_courant(
             election,
@@ -86,5 +117,13 @@ if __name__ == '__main__':
             2,
             5,
             algorithm=Greedy()
+        )
+    )
+    print(
+        chamberlin_courant(
+            election,
+            2,
+            5,
+            algorithm='p_algorithm'
         )
     )
