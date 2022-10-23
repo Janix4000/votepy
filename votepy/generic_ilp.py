@@ -28,7 +28,8 @@ class Solver(ABC):
         pass
 
     @abstractmethod
-    def addConstraint(self, name: str, variables: list[object], coeffs: list[float], rhs: float, sense: str):
+    def addConstraint(self, name: str, variables: list[object],
+                      coeffs: list[float], rhs: float, sense: str):
         """Add a constraint to the model.
 
         In general, the constraints have to be in the form of:
@@ -115,7 +116,8 @@ class CPLEX(Solver):
         self.ctypes.append(vartype)
         return name
 
-    def addConstraint(self, name: str, variables: list[object], coeffs: list[float], rhs: float, sense: str):
+    def addConstraint(self, name: str, variables: list[object],
+                      coeffs: list[float], rhs: float, sense: str):
         self.row_names.append(name)
         self.rows.append([variables, coeffs])
         self.rhs.append(rhs)
@@ -125,9 +127,12 @@ class CPLEX(Solver):
         if len(self.lb) != len(self.ctypes) or len(self.ub) != len(
                 self.ctypes):
             if len(self.lb) > 0 or len(self.ub) > 0:
-                warn("Warning: You've given bounds for some variables but not for all - please make sure you either set bounds for every variable or for none.\nUsing default bounds...")
-            self.model.variables.add(obj=self.obj, types=''.join(
-                self.ctypes), names=self.col_names)
+                warn(
+                    "Warning: You've given bounds for some variables but not for all - please make sure you either set bounds for every variable or for none.\nUsing default bounds..."
+                )
+            self.model.variables.add(obj=self.obj,
+                                     types=''.join(self.ctypes),
+                                     names=self.col_names)
         else:
             self.model.variables.add(obj=self.obj,
                                      lb=self.lb,
@@ -180,7 +185,12 @@ class Gurobi(Solver):
         elif sense == Solver.Sense.MIN:
             self.sense = GRB.MINIMIZE
 
-    def addVariable(self, name: str, var_type: str, obj: Optional[float] = None, lb: Optional[float] = None, ub: Optional[float] = None):
+    def addVariable(self,
+                    name: str,
+                    var_type: str,
+                    obj: Optional[float] = None,
+                    lb: Optional[float] = None,
+                    ub: Optional[float] = None):
         var = self.model.addVar(vtype=self.var_type_map[var_type], name=name)
         if lb is not None:
             self.model.addConstr(var >= lb, name + '_lb')
@@ -213,9 +223,9 @@ class Gurobi(Solver):
     def _debug(self, filename='model_dump.lp'):
         self._setObjective()
         try:
-           self.model.computeIIS()
-           print("Computed Irreducible Inconsistent Subsystem:")
-           for i, c in zip(self.model.IISConstr, self.model.getConstrs()):
+            self.model.computeIIS()
+            print("Computed Irreducible Inconsistent Subsystem:")
+            for i, c in zip(self.model.IISConstr, self.model.getConstrs()):
                 if i == 1:
                     print(c)
         except self.gp.GurobiError:
