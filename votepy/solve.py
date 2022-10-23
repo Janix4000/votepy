@@ -1,4 +1,3 @@
-from re import I
 from typing import Callable, Iterable, Union
 from votepy.ordinal_election import OrdinalElection
 from votepy.algorithms.base_algorithm import BaseAlgorithm
@@ -26,7 +25,7 @@ def solve(rule: Union[Callable, str], voting: Union[OrdinalElection, list[int]],
     ...     [0, 1, 2, 3],
     ...     [3, 2, 1, 0],
     ...     [2, 1, 3, 0]
-    ... ], 2, 3)
+    ... ], 2)
     [2, 1]
     """
     if algorithm is None:
@@ -40,3 +39,12 @@ def solve(rule: Union[Callable, str], voting: Union[OrdinalElection, list[int]],
         return list(result)
     else:
         return result
+
+
+if __name__ == '__main__':
+    from votepy.rules.k_borda import k_borda
+    solve(k_borda, [
+        [0, 1, 2, 3],
+        [3, 2, 1, 0],
+        [2, 1, 3, 0]
+    ], 2, 3)
