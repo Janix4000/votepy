@@ -10,7 +10,6 @@ def test_greedy_monroe():
         [2, 4, 1, 3, 0]
     ]
     size_of_committee = 2
-    voting = OrdinalElection(voting)
     committee = greedy_monroe(voting, size_of_committee)
     assert (committee == [1, 2])
 
