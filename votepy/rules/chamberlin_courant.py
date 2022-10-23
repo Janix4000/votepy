@@ -1,5 +1,5 @@
 import collections
-from votepy.generic_p_algorithm import PAlgorithm
+from votepy.algorithms.p_algorithm import PAlgorithm
 from votepy.ordinal_election import OrdinalElection
 
 from votepy.structure.structure import rule, get_implementation, impl
