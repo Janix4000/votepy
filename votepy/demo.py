@@ -2,6 +2,7 @@ from votepy.visualization import data_to_voting, Visualizator, Generator
 from votepy.rules.k_borda import k_borda
 from votepy.bloc import bloc
 from votepy.sntv import sntv
+from votepy.rules.greedy_monroe import greedy_monroe
 
 if __name__ == "__main__":
 
@@ -12,7 +13,7 @@ if __name__ == "__main__":
 
     for idx, (name, data) in enumerate(
             [("Uniform Rectangle", data1), ("Normal Distribution", data2), ("Two Overlapping Circles", data3)]):
-        for algo in [k_borda, bloc, sntv]:
+        for algo in [k_borda, bloc, sntv, greedy_monroe]:
             results = data_to_voting(algo, data, size_of_committee=10)
             vis = Visualizator(results, data)
             vis.visualize_results(save_to_file=True,
