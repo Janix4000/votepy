@@ -9,6 +9,7 @@ from votepy.solve import solve
 from votepy.algorithms.base_algorithm import BaseAlgorithm
 from votepy.algorithms.generic_brute_force import BruteForce
 from votepy.algorithms.generic_greedy import Greedy
+from votepy.algorithms.base_ilp import ILP
 from votepy.generic_ilp import CPLEX, Gurobi
 
 from typing import Type, Union, Iterable
@@ -107,8 +108,8 @@ def chamberlin_courant_p_algorithm(voting: Union[OrdinalElection, list[int]], si
     algorithm.prepare(scoring_function)
     return algorithm.solve(voting, size_of_committee)
 
-
-def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[int]], size_of_committee: int, solver: Union[Type[Gurobi], Type[CPLEX]] = Gurobi) -> list[int]:
+@impl(chamberlin_courant, ILP)
+def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[int]], size_of_committee: int, algorithm: ILP = ILP(Gurobi)) -> list[int]:
     """Implementation of the chamberlin-courant rule, using ILP formulation by:
     Peters, Dominik & Lackner, Martin. (2020).
     Preferences Single-Peaked on a Circle.
@@ -121,38 +122,33 @@ def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[int]], size_of_co
     Returns:
         list[int]: List of chosen candidates
     """
-    if not isinstance(voting, OrdinalElection):
-        voting = OrdinalElection(voting)
+    def define_model(voting: Union[OrdinalElection, list[int]], size_of_committee: int, solver: Union[Type[Gurobi], Type[CPLEX]]):
+        model = solver()
 
-    model = solver()
-    x = [[model.addVariable(f"x_{i},{r}", 'B', 1)
-          for r in range(voting.ballot_size)]
-         for i in range(voting.number_of_voters)]
+        y = [model.addVariable(f"y_{c}", 'B', 0)
+             for c in range(voting.ballot_size)]
 
-    y = [model.addVariable(f"y_{c}", 'B', 0)
-         for c in range(voting.ballot_size)]
+        x = [[model.addVariable(f"x_{i},{r}", 'B', 1)
+              for r in range(voting.ballot_size)]
+             for i in range(voting.number_of_voters)]
 
-    model.addConstraint(
-        'sum(y)', y, [1]*len(y), size_of_committee, 'E')
+        model.addConstraint(
+            'sum(y)', y, [1]*len(y), size_of_committee, 'E')
 
-    for i in range(voting.number_of_voters):
-        for r in range(voting.ballot_size):
-            top_r_candidates = [y[c] for c in voting[i][:r]]
-            model.addConstraint(
-                f'x_{i}_{r} <= sum(top_{r}_candidates)',
-                [x[i][r]] + top_r_candidates,
-                [1.0] + [-1.0]*len(voting[i][:r]),
-                0,
-                'L'
-            )
+        for i in range(voting.number_of_voters):
+            for r in range(voting.ballot_size):
+                top_r_candidates = [y[c] for c in voting[i][:r]]
+                model.addConstraint(
+                    f'x_{i}_{r} <= sum(top_{r}_candidates)',
+                    [x[i][r]] + top_r_candidates,
+                    [1.0] + [-1.0]*len(voting[i][:r]),
+                    0,
+                    'L'
+                )
+        return model
 
-    model.solve()
-
-    best_committee = []
-    for i, v in enumerate(model.getValues()[-voting.ballot_size:]):
-        if v == 1:
-            best_committee.append(i)
-    return best_committee
+    algorithm.prepare(define_model)
+    return algorithm.solve(voting, size_of_committee)
 
 
 def chamberlin_courant_ilp_custom(voting: Union[OrdinalElection, list[int]], size_of_committee: int, solver: Union[Type[Gurobi], Type[CPLEX]] = Gurobi) -> list[int]:
@@ -228,30 +224,27 @@ if __name__ == '__main__':
         )
     )
     print(
-
         chamberlin_courant(
             election,
             2,
             algorithm=PAlgorithm()
         )
     )
+    print(
+        chamberlin_courant(
+            election,
+            2,
+            algorithm=ILP(Gurobi)
+        )
+    )
+    print(
+        chamberlin_courant(
+            election,
+            2,
+            algorithm=ILP(CPLEX)
+        )
+    )
 
-    print(
-        "ILP article(Gurobi):",
-        chamberlin_courant_ilp(
-            election,
-            2,
-            Gurobi
-        )
-    )
-    print(
-        "ILP article(CPLEX):",
-        chamberlin_courant_ilp(
-            election,
-            2,
-            CPLEX
-        )
-    )
     print(
         "ILP custom(Gurobi):",
         chamberlin_courant_ilp_custom(
