@@ -1,7 +1,7 @@
 from votepy.algorithms.base_algorithm import BaseAlgorithm
 
 from functools import wraps
-from typing import Callable, Iterable, Union
+from typing import Callable, Iterable, Type, Union
 import inspect
 
 from votepy.ordinal_election import OrdinalElection
@@ -142,7 +142,7 @@ def rule(name: str = None, default_algorithm: Union[BaseAlgorithm, str] = None):
     return actual_decorator
 
 
-def impl(rule: Union[Callable, str], algorithm: BaseAlgorithm):
+def impl(rule: Union[Callable, str], algorithm: Type[BaseAlgorithm]):
     """# Summary
     Decorator used to register specific implementation of the voting rule solving function, using algorithm
     If rule has only only one implementation, independent to the any algorithm,this rule function can be decorated with 
@@ -169,7 +169,7 @@ def impl(rule: Union[Callable, str], algorithm: BaseAlgorithm):
     >>> @impl(some_rule, Algo)
     ... def some_rule_algo(algorithm):
     ...     pass
-    >>> 
+    >>>
     >>> get_implementation(some_rule, Algo) == some_rule_algo
     True
     >>> 
