@@ -107,7 +107,7 @@ def chamberlin_courant_p_algorithm(voting: Union[OrdinalElection, list[int]], si
 
     algorithm.prepare(scoring_function)
     return algorithm.solve(voting, size_of_committee)
-    
+
 def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[int]], size_of_committee: int, solver: Union[Type[Gurobi], Type[CPLEX]] = Gurobi) -> list[int]:
     """Implementation of the chamberlin-courant rule, using ILP formulation by:
     Peters, Dominik & Lackner, Martin. (2020).
@@ -124,7 +124,7 @@ def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[int]], size_of_co
     if not isinstance(voting, OrdinalElection):
         voting = OrdinalElection(voting)
 
-    model = solver()
+    model = solver(log=True)
     x = [[model.addVariable(f"x_{i},{r}", 'B', 1)
           for r in range(voting.ballot_size)]
          for i in range(voting.number_of_voters)]

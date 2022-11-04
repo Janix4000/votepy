@@ -107,7 +107,7 @@ class CPLEX(Solver):
                     obj: float = 0.0,
                     lb: Optional[float] = None,
                     ub: Optional[float] = None):
-        self.colnames.append(name)
+        self.col_names.append(name)
         self.obj.append(obj)
         if lb is not None:
             self.lb.append(lb)
@@ -138,12 +138,12 @@ class CPLEX(Solver):
                                      lb=self.lb,
                                      ub=self.ub,
                                      types=''.join(self.ctypes),
-                                     names=self.colnames)
+                                     names=self.col_names)
         print(self.rows)
         self.model.linear_constraints.add(lin_expr=self.rows,
                                           senses=''.join(self.senses),
                                           rhs=self.rhs,
-                                          names=self.rownames)
+                                          names=self.row_names)
         self.model.solve()
 
     def getValues(self):

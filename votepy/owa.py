@@ -22,7 +22,7 @@ def owa_ilp(voting,
     if not isinstance(voting, OrdinalElection):
         voting = OrdinalElection(voting)
     # model = solver(Solver.Sense.MIN)
-    model = solver()
+    model = solver(log=True)
 
     N = voting.number_of_voters
     M = voting.ballot_size
@@ -83,11 +83,11 @@ def owa_ilp(voting,
 
 if __name__ == '__main__':
     voting = [
-       [0, 1, 2, 4, 5, 3], 
-       [0, 1, 2, 4, 5, 3], 
        [0, 1, 2, 4, 5, 3],
-       [5, 0, 3, 2, 4, 1], 
-       [5, 0, 3, 2, 4, 1], 
+       [0, 1, 2, 4, 5, 3],
+       [0, 1, 2, 4, 5, 3],
+       [5, 0, 3, 2, 4, 1],
+       [5, 0, 3, 2, 4, 1],
        [4, 3, 1, 2, 5, 0]
     ]
     size_of_committee = 3
