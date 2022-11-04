@@ -109,7 +109,7 @@ def chamberlin_courant_p_algorithm(voting: Union[OrdinalElection, list[int]], si
     return algorithm.solve(voting, size_of_committee)
 
 @impl(chamberlin_courant, ILP)
-def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[int]], size_of_committee: int, algorithm: ILP = ILP(Gurobi)) -> list[int]:
+def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[list[int]]], size_of_committee: int, algorithm: ILP = ILP(Gurobi)) -> list[int]:
     """Implementation of the chamberlin-courant rule, using ILP formulation by:
     Peters, Dominik & Lackner, Martin. (2020).
     Preferences Single-Peaked on a Circle.
@@ -122,7 +122,7 @@ def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[int]], size_of_co
     Returns:
         list[int]: List of chosen candidates
     """
-    def define_model(voting: Union[OrdinalElection, list[int]], size_of_committee: int, solver: Union[Type[Gurobi], Type[CPLEX]]):
+    def define_model(voting: OrdinalElection, size_of_committee: int, solver: Union[Type[Gurobi], Type[CPLEX]]):
         model = solver()
 
         y = [model.addVariable(f"y_{c}", 'B', 0)

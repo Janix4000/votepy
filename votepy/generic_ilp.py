@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Optional
+from typing import Any, Optional
 from warnings import warn
 
 
@@ -28,7 +28,7 @@ class Solver(ABC):
         pass
 
     @abstractmethod
-    def addConstraint(self, name: str, variables: list[object],
+    def addConstraint(self, name: str, variables: list[Any],
                       coeffs: list[float], rhs: float, sense: str):
         """Add a constraint to the model.
 
@@ -116,7 +116,7 @@ class CPLEX(Solver):
         self.ctypes.append(vartype)
         return name
 
-    def addConstraint(self, name: str, variables: list[object],
+    def addConstraint(self, name: str, variables: list[Any],
                       coeffs: list[float], rhs: float, sense: str):
         self.row_names.append(name)
         self.rows.append([variables, coeffs])
@@ -199,7 +199,7 @@ class Gurobi(Solver):
             self.objective.append(obj * var)
         return var
 
-    def addConstraint(self, name: str, variables: list[object],
+    def addConstraint(self, name: str, variables: list[Any],
                       coeffs: list[float], rhs: float, sense: str):
         expr = sum([v * c for v, c in zip(variables, coeffs)])
         if sense == 'L':
