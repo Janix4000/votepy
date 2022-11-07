@@ -118,7 +118,6 @@ def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[list[int]]], size
     Args:
         voting (Union[OrdinalElection, list[int]]): Voting for which the function calculates the committee
         size_of_committee (int): Size of the committee
-        number_of_scored_candidates (int): Number of scored candidates using k-borda rule
     Returns:
         list[int]: List of chosen candidates
     """
@@ -151,7 +150,10 @@ def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[list[int]]], size
     return algorithm.solve(voting, size_of_committee)
 
 
-def chamberlin_courant_ilp_custom(voting: Union[OrdinalElection, list[int]], size_of_committee: int, solver: Union[Type[Gurobi], Type[CPLEX]] = Gurobi) -> list[int]:
+# For now leaving without annotation - if it's easy to add different
+# implementations of the same rule and algorithm, then I think we should do
+# that. To use this function, you need to call it explicitly.
+def chamberlin_courant_ilp_custom(voting: Union[OrdinalElection, list[list[int]]], size_of_committee: int, algorithm: ILP = ILP(Gurobi)) -> list[int]:
     """Custom implementation of the chamberlin courant rule.
 
     Args:
@@ -161,36 +163,30 @@ def chamberlin_courant_ilp_custom(voting: Union[OrdinalElection, list[int]], siz
     Returns:
         list[int]: List of chosen candidates
     """
-    if not isinstance(voting, OrdinalElection):
-        voting = OrdinalElection(voting)
-    model = solver()
 
-    x = [model.addVariable(f"x_{i}", 'B') for i in range(voting.ballot_size)]
-    # for i in range(voting.ballot_size):
-    #     x.append(model.addVariable(f"x_{i}", 'B'))
+    def define_model(voting: OrdinalElection, size_of_committee: int, solver: Union[Type[Gurobi], Type[CPLEX]]):
+        model = solver()
+        x = [model.addVariable(f"x_{i}", 'B') for i in range(voting.ballot_size)]
 
-    y = []
-    for i, vote in enumerate(voting):
-        y.append([None]*voting.ballot_size)
-        for j, candidate in enumerate(vote):
-            y[-1][candidate] = (model.addVariable(
-                f"y_{i}_{j}", "B", voting.ballot_size - j))
+        y = []
+        for i, vote in enumerate(voting):
+            y.append([None]*voting.ballot_size)
+            for j, candidate in enumerate(vote):
+                y[-1][candidate] = (model.addVariable(
+                    f"y_{i}_{j}", "B", voting.ballot_size - j))
 
-    model.addConstraint("sum(x) == k", x, [1]*len(x), size_of_committee, 'E')
+        model.addConstraint("sum(x) == k", x, [1]*len(x), size_of_committee, 'E')
 
-    for i in range(voting.number_of_voters):
-        model.addConstraint(f"sum(y[{i}]) == 1", y[i], [1]*len(y[i]), 1, 'E')
-        for j in range(voting.ballot_size):
-            model.addConstraint(f"x_{j} >= y_{i}_{j}", [
-                                x[j], y[i][j]], [1, -1], 0, 'G')
+        for i in range(voting.number_of_voters):
+            model.addConstraint(f"sum(y[{i}]) == 1", y[i], [1]*len(y[i]), 1, 'E')
+            for j in range(voting.ballot_size):
+                model.addConstraint(f"x_{j} >= y_{i}_{j}", [
+                                    x[j], y[i][j]], [1, -1], 0, 'G')
 
-    model.solve()
+        return model
 
-    best_committee = []
-    for i, v in enumerate(model.getValues()[:voting.ballot_size]):
-        if v == 1:
-            best_committee.append(i)
-    return best_committee
+    algorithm.prepare(define_model)
+    return algorithm.solve(voting, size_of_committee)
 
 
 if __name__ == '__main__':
@@ -246,18 +242,17 @@ if __name__ == '__main__':
     )
 
     print(
-        "ILP custom(Gurobi):",
         chamberlin_courant_ilp_custom(
             election,
             2,
-            Gurobi
+            algorithm=ILP(Gurobi)
         )
     )
     print(
-        "ILP custom(CPLEX):",
         chamberlin_courant_ilp_custom(
             election,
             2,
-            CPLEX
+            algorithm=ILP(CPLEX)
+
         )
     )
