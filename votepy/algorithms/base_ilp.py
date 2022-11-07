@@ -1,22 +1,25 @@
+from typing import Callable, Type, Union
 from votepy.ordinal_election import OrdinalElection
 from votepy.algorithms.base_algorithm import BaseAlgorithm
 from votepy.structure.structure import algo
-from votepy.generic_ilp import CPLEX, Gurobi
+from votepy.generic_ilp import Gurobi, solver_t, model_t
 
 
 @algo(name='ilp')
 class ILP(BaseAlgorithm):
 
-    def __init__(self, solver=Gurobi):
+    def __init__(self, solver: solver_t = Gurobi):
         """Base class for ILP algorithms"""
         super().__init__()
         self.solver = solver
 
-    def prepare(self, define_model):
+    def prepare(self, define_model: Callable[
+        [OrdinalElection, int, solver_t],
+            model_t]) -> None:
         self.define_model = define_model
         super().prepare()
 
-    def __get_committee(self, model, ballot_size):
+    def __get_committee(self, model: model_t, ballot_size: int) -> list[int]:
         """Retrieves the winning committee from the ILP solution. It is assumed
         that the variables representing whether a candidate has been chosen,
         are always the first <ballot_size> binary model variables.

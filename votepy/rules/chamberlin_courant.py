@@ -10,7 +10,7 @@ from votepy.algorithms.base_algorithm import BaseAlgorithm
 from votepy.algorithms.generic_brute_force import BruteForce
 from votepy.algorithms.generic_greedy import Greedy
 from votepy.algorithms.base_ilp import ILP
-from votepy.generic_ilp import CPLEX, Gurobi
+from votepy.generic_ilp import CPLEX, Gurobi, model_t, solver_t
 
 from typing import Type, Union, Iterable
 
@@ -120,7 +120,7 @@ def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[list[int]]], size
     Returns:
         list[int]: List of chosen candidates
     """
-    def define_model(voting: OrdinalElection, size_of_committee: int, solver: Union[Type[Gurobi], Type[CPLEX]]):
+    def define_model(voting: OrdinalElection, size_of_committee: int, solver: solver_t) -> model_t:
         model = solver()
 
         y = [model.addVariable(f"y_{c}", 'B', 0)
@@ -162,7 +162,7 @@ def chamberlin_courant_ilp_custom(voting: Union[OrdinalElection, list[list[int]]
         list[int]: List of chosen candidates
     """
 
-    def define_model(voting: OrdinalElection, size_of_committee: int, solver: Union[Type[Gurobi], Type[CPLEX]]):
+    def define_model(voting: OrdinalElection, size_of_committee: int, solver: solver_t) -> model_t:
         model = solver()
         x = [model.addVariable(f"x_{i}", 'B') for i in range(voting.ballot_size)]
 

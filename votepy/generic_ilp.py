@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Any, Iterable, Optional
+from typing import Any, Iterable, Optional, Type, Union
 from warnings import warn
 
 
@@ -230,3 +230,7 @@ class Gurobi(Solver):
         except self.gp.GurobiError:
             print("The model is feasible!")
         self.model.write(filename)
+
+
+solver_t = Union[Type[CPLEX], Type[Gurobi]]
+model_t = Union[CPLEX, Gurobi]
