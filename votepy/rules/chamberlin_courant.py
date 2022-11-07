@@ -23,7 +23,6 @@ def chamberlin_courant(voting: Union[OrdinalElection, list[int]], size_of_commit
     ## Args:
         `voting` (`OrdinalElection | list[int]`): Voting for which the function calculates the committee
         `size_of_committee` (`int`): Size of the committee
-        `number_of_scored_candidates` (`int`): Number of scored candidates using k-borda rule
 
     ## Returns:
         `list[int]`: List of chosen candidates
@@ -159,7 +158,6 @@ def chamberlin_courant_ilp_custom(voting: Union[OrdinalElection, list[list[int]]
     Args:
         voting (Union[OrdinalElection, list[int]]): Voting for which the function calculates the committee
         size_of_committee (int): Size of the committee
-        number_of_scored_candidates (int): Number of scored candidates using k-borda rule
     Returns:
         list[int]: List of chosen candidates
     """
