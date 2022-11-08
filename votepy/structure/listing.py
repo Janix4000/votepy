@@ -16,6 +16,8 @@ def algorithms(rule: Union[str, Callable] = None) -> dict[str, Type[BaseAlgorith
     >>> import votepy
     >>> "greedy" in votepy.algorithms()
     True
+    >>> "greedy" in votepy.algorithms("chamberlin_courant")
+    True
     """
     if rule is not None:
         if not isinstance(rule, str):
