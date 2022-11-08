@@ -13,6 +13,9 @@ def algorithms(rule: Union[str, Callable] = None) -> dict[str, Type[BaseAlgorith
         -> dict[str, Type[BaseAlgorithm]]: name->algorithm_class
 
     ## Examples
+    >>> import votepy
+    >>> "greedy" in votepy.algorithms()
+    True
     """
     if rule is not None:
         if not isinstance(rule, str):
@@ -33,5 +36,8 @@ def rules() -> dict[str, Callable]:
         -> dict[str, Callable]: name->voting_rule
 
     ## Examples
+    >>> import votepy
+    >>> "k_borda" in votepy.rules()
+    True
     """
     return structure.rules
