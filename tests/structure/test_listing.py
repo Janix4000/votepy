@@ -9,7 +9,7 @@ class NotImplemented(BaseAlgorithm):
 
 
 def test_lists_all_algos():
-    assert algorithms() == {"slow": Slow, "fast": Fast, "not_impl": NotImplemented}
+    assert {"slow": Slow, "fast": Fast, "not_impl": NotImplemented}.items() <= algorithms().items()
 
 
 def test_lists_rule_algos():
@@ -18,4 +18,4 @@ def test_lists_rule_algos():
 
 
 def test_lists_rules():
-    assert rules() == {"add": add}
+    assert {"add": add}.items() <= rules().items()
