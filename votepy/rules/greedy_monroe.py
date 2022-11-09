@@ -1,7 +1,7 @@
 from votepy.ordinal_election import OrdinalElection, OrdinalBallot
 from typing import Union
 
-from votepy.structure.structure import algo, BaseAlgorithm, rule, impl
+from votepy.meta.structure import algo, BaseAlgorithm, rule, impl
 from votepy.solve import solve
 
 
@@ -20,7 +20,6 @@ class GreedyMonroe(BaseAlgorithm):
                 for j in range(m_candidates):
                     mapping[i][vs[i][j]] = m_candidates - j - 1
             return mapping
-
 
         mapping = map_votes(voting)
         kk = size_of_committee

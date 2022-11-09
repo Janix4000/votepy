@@ -1,4 +1,4 @@
-from votepy.structure.structure import rule, impl, algo, get_implementation, get_algorithm
+from votepy.meta.structure import rule, impl, algo, get_implementation, get_algorithm
 from votepy.algorithms.base_algorithm import BaseAlgorithm
 
 

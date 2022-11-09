@@ -1,7 +1,7 @@
 from votepy.ordinal_election import OrdinalElection
 
 from votepy.algorithms.base_algorithm import BaseAlgorithm
-from votepy.structure.structure import algo
+from votepy.meta.structure import algo
 
 from typing import Callable, Iterable
 

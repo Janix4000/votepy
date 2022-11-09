@@ -3,7 +3,7 @@ import collections
 from votepy.algorithms.p_algorithm import PAlgorithm
 from votepy.ordinal_election import OrdinalElection
 
-from votepy.structure.structure import rule, impl
+from votepy.meta.structure import rule, impl
 from votepy.solve import solve
 
 from votepy.algorithms.base_algorithm import BaseAlgorithm
@@ -16,7 +16,7 @@ from typing import Type, Union, Iterable
 
 @rule()
 def chamberlin_courant(voting: Union[OrdinalElection, list[int]], size_of_committee: int, algorithm: BaseAlgorithm) -> \
-list[int]:
+        list[int]:
     """# Summary
     Chamberlin-Courant rule
     ## Args:
@@ -81,7 +81,6 @@ def chamberlin_courant_greedy(voting, size_of_committee, algorithm: Greedy = Gre
     return algorithm.solve(voting, size_of_committee)
 
 
-
 # Based on https://arxiv.org/abs/1901.09217
 @impl(chamberlin_courant, PAlgorithm)
 def chamberlin_courant_p_algorithm(voting: Union[OrdinalElection, list[int]], size_of_committee: int,
@@ -107,7 +106,8 @@ def chamberlin_courant_p_algorithm(voting: Union[OrdinalElection, list[int]], si
 
     algorithm.prepare(scoring_function)
     return algorithm.solve(voting, size_of_committee)
-    
+
+
 def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[int]], size_of_committee: int, solver: Union[Type[Gurobi], Type[CPLEX]] = Gurobi) -> list[int]:
     """Implementation of the chamberlin-courant rule, using ILP formulation by:
     Peters, Dominik & Lackner, Martin. (2020).
@@ -195,7 +195,6 @@ def chamberlin_courant_ilp_custom(voting: Union[OrdinalElection, list[int]], siz
         if v == 1:
             best_committee.append(i)
     return best_committee
-
 
 
 if __name__ == '__main__':

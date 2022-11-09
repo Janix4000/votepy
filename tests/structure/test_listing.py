@@ -1,6 +1,6 @@
 from mock_integration import add, Slow, Fast
-from votepy.structure.structure import algo, BaseAlgorithm
-from votepy.structure.listing import algorithms, rules
+from votepy.meta.structure import algo, BaseAlgorithm
+from votepy.meta.listing import algorithms, rules
 
 
 @algo(name="not_impl")

@@ -1,5 +1,5 @@
 from typing import Callable, Type, Union
-import votepy.structure.structure as structure
+import votepy.meta.structure as structure
 from votepy.algorithms.base_algorithm import BaseAlgorithm
 
 
