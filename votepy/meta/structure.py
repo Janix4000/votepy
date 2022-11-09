@@ -23,7 +23,7 @@ def algo(name: str):
 
     ## Examples
     >>> from votepy.algorithms.base_algorithm import BaseAlgorithm
-    >>> 
+    >>>
     >>> @algo(name='name')
     ... class Algo(BaseAlgorithm):
     ...     def _solve():
@@ -55,7 +55,7 @@ def get_algorithm(algorithm: Union[str, BaseAlgorithm], *args, **kwargs) -> Base
 
     ## Examples
     >>> from votepy.algorithms.base_algorithm import BaseAlgorithm
-    >>> 
+    >>>
     >>> @algo(name='name')
     ... class Algo(BaseAlgorithm):
     ...     def __init__(self, arg=0):
@@ -63,7 +63,7 @@ def get_algorithm(algorithm: Union[str, BaseAlgorithm], *args, **kwargs) -> Base
     ...
     ...     def _solve():
     ...         pass
-    ...     
+    ...
     ...     def __eq__(self, rhs):
     ...         return self.arg == rhs.arg
     >>>
@@ -76,6 +76,9 @@ def get_algorithm(algorithm: Union[str, BaseAlgorithm], *args, **kwargs) -> Base
     >>> get_algorithm(Algo(arg=10)) == Algo(arg=10)
     True
     """
+
+    if algorithm is None:
+        return None
 
     if isinstance(algorithm, str):
         if algorithm not in algorithms:
@@ -114,6 +117,7 @@ def rule(name: str = None, default_algorithm: Union[BaseAlgorithm, str] = None):
         def wrapper(voting, size_of_committee, *args, **kwargs):
             if not isinstance(voting, OrdinalElection) and isinstance(voting, Iterable):
                 voting = OrdinalElection(voting)
+
             return rule(voting, size_of_committee, *args, **kwargs)
 
         rule_name = name if name is not None else rule.__name__
@@ -121,6 +125,8 @@ def rule(name: str = None, default_algorithm: Union[BaseAlgorithm, str] = None):
         implementations[rule_name] = {}
         if default_algorithm is not None:
             default_algorithms[rule_name] = get_algorithm(default_algorithm).__class__
+        else:
+            default_algorithms[rule_name] = None
 
         return wrapper
     return actual_decorator
@@ -138,7 +144,7 @@ def impl(rule: Union[Callable, str], algorithm: BaseAlgorithm):
 
     ## Examples
     >>> from votepy.algorithms.base_algorithm import BaseAlgorithm
-    >>> 
+    >>>
     >>> @algo(name='name')
     ... class Algo(BaseAlgorithm):
     ...     def _solve():
@@ -151,7 +157,7 @@ def impl(rule: Union[Callable, str], algorithm: BaseAlgorithm):
     >>> @impl(some_rule, Algo)
     ... def some_rule_algo(algorithm):
     ...     pass
-    >>> 
+    >>>
     >>> get_implementation(some_rule, Algo) == some_rule_algo
     True
     """
@@ -162,8 +168,9 @@ def impl(rule: Union[Callable, str], algorithm: BaseAlgorithm):
             return implementation(*args, **kwargs)
 
         rule_name = rule if isinstance(rule, str) else rule.__name__
-        algorithm_name = algorithm if isinstance(
-            algorithm, str) else algorithm.name
+
+        algorithm_name = __get_algo_name(algorithm)
+
         implementations[rule_name][algorithm_name] = wrapper
 
         return wrapper
@@ -187,7 +194,7 @@ def get_implementation(rule: Union[Callable, str], algorithm: BaseAlgorithm) -> 
 
     ## Examples
     >>> from votepy.algorithms.base_algorithm import BaseAlgorithm
-    >>> 
+    >>>
     >>> @algo(name='name')
     ... class Algo(BaseAlgorithm):
     ...     def _solve():
@@ -209,8 +216,7 @@ def get_implementation(rule: Union[Callable, str], algorithm: BaseAlgorithm) -> 
     True
     """
     rule_name = rule if isinstance(rule, str) else rule.__name__
-    algorithm_name = algorithm if isinstance(
-        algorithm, str) else algorithm.name
+    algorithm_name = __get_algo_name(algorithm)
 
     if rule_name not in implementations:
         raise ValueError(f"Rule {rule_name} has not been registered. Remember to register the main rule function with `@rule()` decorator.")
@@ -223,7 +229,7 @@ def get_implementation(rule: Union[Callable, str], algorithm: BaseAlgorithm) -> 
     return rule_implementations[algorithm_name]
 
 
-def get_default_algorithm(rule: Union[Callable, str]) -> BaseAlgorithm:
+def get_default_algorithm(rule: Union[Callable, str]) -> Union[BaseAlgorithm, None]:
     """# Summary
     Returns default algorithm class for the given rule.
 
@@ -232,15 +238,12 @@ def get_default_algorithm(rule: Union[Callable, str]) -> BaseAlgorithm:
     ## Args:
         `rule` (Callable | str): Rule function or its identification name.
 
-    ## Raises:
-        `ValueError`: Rule has no default algorithm
-
     ## Returns:
-        -> BaseAlgorithm: Default algorithm
+        -> BaseAlgorithm | None: Default algorithm or None if rule has no default algorithm
 
     ## Examples
     >>> from votepy.algorithms.base_algorithm import BaseAlgorithm
-    >>> 
+    >>>
     >>> @algo(name='name')
     ... class Algo(BaseAlgorithm):
     ...     def _solve():
@@ -253,13 +256,13 @@ def get_default_algorithm(rule: Union[Callable, str]) -> BaseAlgorithm:
     >>> @impl(some_rule, Algo)
     ... def some_rule_algo(algorithm):
     ...     pass
-    >>> 
+    >>>
     >>> get_default_algorithm(some_rule) == Algo
     True
     """
     rule_name = rule if isinstance(rule, str) else rule.__name__
     if rule_name not in default_algorithms:
-        raise ValueError(f"Rule {rule_name} has not default algorithm/implementation")
+        return None
     return default_algorithms[rule_name]
 
 
@@ -267,15 +270,15 @@ def get_default_implementation(rule: Union[Callable, str]) -> Callable:
     """# Summary
     Returns implementation for the given rule using the default algorithm
 
-    ## Args:
+    # Args:
         `rule` (Callable | str): Rule function or its identification name.
 
-    ## Returns:
+    # Returns:
         -> Callable: Implementation of the given rule, using default algorithm to find a committee
 
-    ## Examples
+    # Examples
     >>> from votepy.algorithms.base_algorithm import BaseAlgorithm
-    >>> 
+    >>>
     >>> @algo(name='name')
     ... class Algo(BaseAlgorithm):
     ...     def _solve():
@@ -288,7 +291,7 @@ def get_default_implementation(rule: Union[Callable, str]) -> Callable:
     >>> @impl(some_rule, Algo)
     ... def some_rule_algo(algorithm):
     ...     pass
-    >>> 
+    >>>
     >>> get_default_algorithm(some_rule) == Algo
     True
     >>> get_default_algorithm("some_rule") == Algo
@@ -296,3 +299,12 @@ def get_default_implementation(rule: Union[Callable, str]) -> Callable:
     """
     default_algorithm = get_default_algorithm(rule)
     return get_implementation(rule, default_algorithm)
+
+
+def __get_algo_name(algorithm):
+    if algorithm is None:
+        return None
+    elif isinstance(algorithm, str):
+        return algorithm
+    else:
+        return algorithm.name
