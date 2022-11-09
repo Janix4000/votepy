@@ -99,6 +99,8 @@ def get_algorithm(algorithm: Union[str, BaseAlgorithm], *args, **kwargs) -> Base
 def rule(name: str = None, default_algorithm: Union[BaseAlgorithm, str] = None):
     """# Summary
     Decorator used to register a voting rule function.
+    If rule has only only one implementation, independent to the any algorithm,this rule function can be decorated with 
+    `@impl` with the algorithm argument set to None. See `@impl` for more details.
 
     ### IT MUST BE USED WITH PARENTHESES, EVEN WITHOUT SPECIFYING `NAME` ARGUMENT.
 
@@ -143,12 +145,14 @@ def rule(name: str = None, default_algorithm: Union[BaseAlgorithm, str] = None):
 def impl(rule: Union[Callable, str], algorithm: BaseAlgorithm):
     """# Summary
     Decorator used to register specific implementation of the voting rule solving function, using algorithm
+    If rule has only only one implementation, independent to the any algorithm,this rule function can be decorated with 
+    `@impl` with the algorithm argument set to None.
 
-    Implementation function must have `algorithm` argument
+    Implementation function must have `algorithm` argument.
 
     ## Args:
         `rule` (Callable): Rule function or its identification name
-        `algorithm` (BaseAlgorithm): Algorithm class or its identification name
+        `algorithm` (BaseAlgorithm | None): Algorithm class or its identification name. If main rule function is decorated, must be set to None
 
     ## Examples
     >>> from votepy.algorithms.base_algorithm import BaseAlgorithm
@@ -156,7 +160,7 @@ def impl(rule: Union[Callable, str], algorithm: BaseAlgorithm):
     >>> @algo(name='name')
     ... class Algo(BaseAlgorithm):
     ...     def _solve():
-    ...         pass
+    ...         pass # computations
     >>>
     >>> @rule()
     ... def some_rule():
@@ -165,9 +169,15 @@ def impl(rule: Union[Callable, str], algorithm: BaseAlgorithm):
     >>> @impl(some_rule, Algo)
     ... def some_rule_algo(algorithm):
     ...     pass
-    >>>
+    >>> 
     >>> get_implementation(some_rule, Algo) == some_rule_algo
     True
+    >>> 
+    >>> @impl('rule_without_algorithm', algorithm=None)
+    ... @rule()
+    ... def rule_without_algorithm():
+    ...     pass # computations
+    >>> 
     """
     def actual_decorator(implementation):
 
