@@ -7,7 +7,7 @@ from functools import cmp_to_key
 from votepy.rules.chamberlin_courant import chamberlin_courant_greedy
 from votepy.rules.k_borda import k_borda
 from votepy.bloc import bloc
-from votepy.sntv import sntv
+from votepy.rules.sntv import sntv
 
 
 # from greedy_monroe import greedy_monroe
@@ -154,7 +154,6 @@ class Visualizator:
             plt.clf()
             plt.cla()
             plt.close()
-
 
 
 if __name__ == "__main__":
