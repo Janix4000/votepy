@@ -13,8 +13,9 @@ class ILP(BaseAlgorithm):
         super().__init__()
         self.solver = solver
 
+    committee_size_t = int
     def prepare(self, define_model: Callable[
-        [OrdinalElection, int, solver_t],
+        [OrdinalElection, committee_size_t, solver_t],
             model_t]) -> None:
         self.define_model = define_model
         super().prepare()
