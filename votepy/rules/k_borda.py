@@ -31,7 +31,7 @@ def k_borda(voting: Union[OrdinalElection, list[int]], size_of_committee: int) -
     ...     [2, 1, 3, 0]
     ... ]
     >>> k_borda(voting, 2)
-    (2, 1)
+    [2, 1]
     >>> vp.solve('k_borda', voting, 2)
     [2, 1]
     """

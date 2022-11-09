@@ -117,8 +117,16 @@ def rule(name: str = None, default_algorithm: Union[BaseAlgorithm, str] = None):
         def wrapper(voting, size_of_committee, *args, **kwargs):
             if not isinstance(voting, OrdinalElection) and isinstance(voting, Iterable):
                 voting = OrdinalElection(voting)
+            if isinstance(voting, OrdinalElection):
+                n = voting.ballot_size
+                if size_of_committee > n or size_of_committee <= 0:
+                    raise ValueError(
+                        f"Size of committee needs to be from the range 1 to the number of all candidates.")
 
-            return rule(voting, size_of_committee, *args, **kwargs)
+            result = rule(voting, size_of_committee, *args, **kwargs)
+            if isinstance(result, Iterable):
+                result = list(result)
+            return result
 
         rule_name = name if name is not None else rule.__name__
         rules[rule_name] = wrapper
