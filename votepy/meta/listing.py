@@ -1,9 +1,9 @@
 from typing import Callable, Type, Union
-import votepy.structure.structure as structure
+import votepy.meta.structure as structure
 from votepy.algorithms.base_algorithm import BaseAlgorithm
 
 
-def algorithms(rule: Union[str, Callable] = None) -> dict[str, Type[BaseAlgorithm]]:
+def get_algorithms(rule: Union[str, Callable] = None) -> dict[str, Type[BaseAlgorithm]]:
     """# Summary
     Returns a dict name->algorithm_class with all of the implemented voting solvers or only implemented for the given rule.
     ## Args:
@@ -14,11 +14,11 @@ def algorithms(rule: Union[str, Callable] = None) -> dict[str, Type[BaseAlgorith
 
     ## Examples
     >>> import votepy
-    >>> "greedy" in votepy.algorithms()
+    >>> "greedy" in votepy.get_algorithms()
     True
-    >>> "greedy" in votepy.algorithms("chamberlin_courant")
+    >>> "greedy" in votepy.get_algorithms("chamberlin_courant")
     True
-    >>> "greedy" in votepy.algorithms("k_borda")
+    >>> "greedy" in votepy.get_algorithms("k_borda")
     False
     """
     if rule is not None:
@@ -32,7 +32,7 @@ def algorithms(rule: Union[str, Callable] = None) -> dict[str, Type[BaseAlgorith
     return algorithms
 
 
-def rules() -> dict[str, Callable]:
+def get_rules() -> dict[str, Callable]:
     """# Summary
     Returns a dict name->voting_rule with all of the implemented voting rules.
 
@@ -41,7 +41,7 @@ def rules() -> dict[str, Callable]:
 
     ## Examples
     >>> import votepy
-    >>> "k_borda" in votepy.rules()
+    >>> "k_borda" in votepy.get_rules()
     True
     """
     return structure.rules

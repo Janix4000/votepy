@@ -1,4 +1,4 @@
-from votepy.structure.structure import rule, rules
+from votepy.meta.structure import rule, rules
 
 
 @rule()

@@ -3,7 +3,7 @@ import random
 from votepy.ordinal_election import OrdinalElection
 from typing import Callable, Iterable
 
-from votepy.structure.structure import algo, BaseAlgorithm
+from votepy.meta.structure import algo, BaseAlgorithm
 
 
 @algo(name='p_algorithm')

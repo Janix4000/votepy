@@ -1,5 +1,5 @@
-import votepy.rules.chamberlin_courant
-import votepy.rules.greedy_monroe
-import votepy.rules.k_borda
+import votepy.algorithms
+import votepy.rules
 
-from votepy.structure.listing import algorithms, rules
+from votepy.meta.listing import get_algorithms, get_rules
+from votepy.solve import solve
