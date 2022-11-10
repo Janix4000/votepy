@@ -33,7 +33,11 @@ def solve(rule: Union[Callable, str], voting: Union[OrdinalElection, list[int]],
 
     implementation = get_implementation(rule, algorithm)
     algorithm = get_algorithm(algorithm)
-    result = implementation(voting, size_of_committee, *rule_args, algorithm=algorithm, **rule_kwargs)
+
+    if algorithm is None:
+        result = implementation(voting, size_of_committee, *rule_args, **rule_kwargs)
+    else:
+        result = implementation(voting, size_of_committee, *rule_args, algorithm=algorithm, **rule_kwargs)
 
     if isinstance(result, Iterable):
         return list(result)

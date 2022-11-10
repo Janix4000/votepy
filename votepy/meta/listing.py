@@ -21,11 +21,13 @@ def get_algorithms(rule: Union[str, Callable] = None) -> dict[str, Type[BaseAlgo
     >>> "greedy" in votepy.get_algorithms("k_borda")
     False
     """
+    algorithms = {name: algo for name, algo in structure.algorithms.items() if name is not None}
+
     if rule is not None:
         if not isinstance(rule, str):
             rule = rule.__name__
         rule_implementations = structure.implementations[rule]
-        algorithms = {name: structure.algorithms[name] for name in rule_implementations}
+        algorithms = {name: structure.algorithms[name] for name in rule_implementations if name is not None}
     else:
         algorithms = structure.algorithms
 
@@ -44,4 +46,4 @@ def get_rules() -> dict[str, Callable]:
     >>> "k_borda" in votepy.get_rules()
     True
     """
-    return structure.rules
+    return dict(structure.rules)

@@ -33,12 +33,4 @@ class BaseAlgorithm(ABC):
             raise ValueError(
                 f'Algorithm must be initialized with `prepare(self, ...)` method before usage.')
 
-        if not isinstance(voting, OrdinalElection):
-            voting = OrdinalElection(voting)
-
-        n = voting.ballot_size
-        if size_of_committee > n or size_of_committee <= 0:
-            raise ValueError(
-                f"Size of committee needs to be from the range 1 to the number of all candidates.")
-
         return self._solve(voting, size_of_committee)
