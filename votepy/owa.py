@@ -69,7 +69,7 @@ def owa_ilp(voting,
         for k in range(K - 1):
             vars = np.concatenate((x_ijk[i, :, k], x_ijk[i, :, k + 1]))
             model.addConstraint(
-                f"(e) sum u_{i}_aj*x_{i}_j_{k} >= sum u_{i}_aj*x_{i}_j_{k+1}",
+                f"(e) sum u_{i}_aj*x_{i}_j_{k} >= sum u_{i}_aj*x_{i}_j_{k + 1}",
                 vars, u[i] + list(map(lambda x: -x, u[i])), 0, 'G')
 
     model.solve()
@@ -81,14 +81,60 @@ def owa_ilp(voting,
     return best_committee
 
 
+def owa_k_median(voting, size_of_committee, k, solver):
+    if not 1 <= k <= size_of_committee:
+        raise ValueError(
+            f"Expected k to be an integer from range 1 to {size_of_committee}, got: {k}")
+    owa_vector = [0] * (k - 1) + [1] + [0] * (size_of_committee - k)
+    owa_ilp(voting, size_of_committee, owa_vector, solver)
+
+
+def owa_k_best(voting, size_of_committee, k, solver):
+    if not 1 <= k <= size_of_committee:
+        raise ValueError(
+            f"Expected k to be an integer from range 1 to {size_of_committee}, got: {k}")
+    owa_vector = [1] * k + [0] * (size_of_committee - k)
+    owa_ilp(voting, size_of_committee, owa_vector, solver)
+
+
+def owa_arithmetic_progression(voting, size_of_committee, a, solver):
+    if not a >= 0:
+        raise ValueError(
+            f"Expected a to be a positive number, got: {a}")
+    owa_vector = [a + k for k in range(size_of_committee-1, -1, -1)]
+    owa_ilp(voting, size_of_committee, owa_vector, solver)
+
+
+def owa_geometric_progression(voting, size_of_committee, p, solver):
+    if not p > 1:
+        raise ValueError(
+            f"Expected p to be greater than 1, got: {p}")
+    owa_vector = [p ** k for k in range(size_of_committee-1, -1, -1)]
+    owa_ilp(voting, size_of_committee, owa_vector, solver)
+
+
+def owa_harmonic(voting, size_of_committee, solver):
+    owa_vector = [1 / k for k in range(1, size_of_committee+1)]
+    owa_ilp(voting, size_of_committee, owa_vector, solver)
+
+
+def owa_hurwicz(voting, size_of_committee, p, solver):
+    if not 0 <= p <= 1:
+        raise ValueError(
+            f"Expected p to be in range 0 to 1, got: {p}")
+    owa_vector = [p] + [0] * (size_of_committee-2) + [1-p]
+    owa_ilp(voting, size_of_committee, owa_vector, solver)
+
+
+
 if __name__ == '__main__':
     voting = [
-       [0, 1, 2, 4, 5, 3], 
-       [0, 1, 2, 4, 5, 3], 
-       [0, 1, 2, 4, 5, 3],
-       [5, 0, 3, 2, 4, 1], 
-       [5, 0, 3, 2, 4, 1], 
-       [4, 3, 1, 2, 5, 0]
+        [0, 1, 2, 4, 5, 3],
+        [0, 1, 2, 4, 5, 3],
+        [0, 1, 2, 4, 5, 3],
+        [5, 0, 3, 2, 4, 1],
+        [5, 0, 3, 2, 4, 1],
+        [4, 3, 1, 2, 5, 0]
     ]
     size_of_committee = 3
     print(chamberlin_courant_ilp(voting, size_of_committee))
