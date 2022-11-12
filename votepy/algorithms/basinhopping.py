@@ -9,14 +9,36 @@ from typing import Callable, Iterable
 
 
 @algo('basinhopping')
+# .
 class BasinHopping(BaseAlgorithm):
-    def __init__(self, x0=None, niter=10, seed=None, minimizer_kwargs={}):
+    def __init__(self, x0: Iterable[int] = None, niter: int = 10, seed: int = None, minimizer_kwargs: dict = {}, **kwargs):
+        """# Summary
+        Numeric voting solving method based on the `scipy.optimize.basinhopping`
+
+        # Args:
+            `x0` (Iterable[int], optional): Initial committee guess. Defaults to `None`.
+            `niter` (int, optional): Number of iterations. Defaults to `10`.
+            `seed` (int, optional): Random seed. Defaults to `None`.
+            `minimizer_kwargs` (dict, optional): Optimizer kwargs. Defaults to `{}`.
+        """
         self.niter = niter
         self.minimizer_kwargs = minimizer_kwargs
         self.x0 = x0
         self.seed = seed
+        self.kwargs = kwargs
+        super().__init__()
 
-    def prepare(self, scoring_function: Callable[[Iterable[int], OrdinalElection], float]):
+    committee_t = Iterable[int]
+
+    def prepare(self, scoring_function: Callable[[committee_t, OrdinalElection], float]) -> None:
+        """# Summary
+        Prepare the scoring function. Should be invoked only by the voting rule function.
+
+        ## Args:
+            `scoring_function` (`(committee, voting) -> score`): The scoring function used to determine the best committee.
+            It should take the committee and election as parameters and return the score of that committee. 
+
+        """
         self.scoring_function = scoring_function
         super().prepare()
 
@@ -45,5 +67,5 @@ class BasinHopping(BaseAlgorithm):
             return x
 
         res = scipy.optimize.basinhopping(optimize, np.copy(chosen), niter=self.niter, take_step=take_step,
-                                          seed=self.seed, minimizer_kwargs=self.minimizer_kwargs)
+                                          seed=self.seed, minimizer_kwargs=self.minimizer_kwargs, **self.kwargs)
         return res.x.astype(int)
