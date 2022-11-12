@@ -1,43 +1,41 @@
 from votepy.ordinal_election import OrdinalElection
+from votepy.meta.structure import rule, impl
+
 from typing import Union
 
 
-def bloc(voting: Union[OrdinalElection, list[int]], size_of_committee: int) -> list[int]:
-    """
+@impl('bloc', algorithm=None)
+@rule()
+def bloc(voting: Union[OrdinalElection, list[list[int]]], size_of_committee: int) -> list[int]:
+    """# Summary
     Function computes a committee of given size using Bloc rule for specified number of favorite candidates.
 
     ### Args:
-        `voting` (OrdinalElection | list): voting for which the function calculates the committee
+        `voting` (OrdinalElection | list[list[int]]): Voting for which the function calculates the committee
         `size_of_committee` (int): Size of the committee
 
-    ### Raises:
-        `ValueError`: The size of the committee is a positive integer which does not exceed the number of all candidates
-        `ValueError`: The number of candidates scored in Bloc is a positive integer which does not exceed the number of all candidates
-
     ### Returns:
-        `list`: List of chosen candidates
+        `list[int]`: List of chosen candidates
 
     ### Examples
-    >>> election = OrdinalElection([
+    >>> import votepy
+    >>> election = [
     ...     [0,1,2,3,4],
     ...     [4,0,1,3,2],
     ...     [3,0,1,2,4],
     ...     [2,1,3,4,0],
     ...     [2,1,4,0,3],
     ...     [1,2,3,4,0]
-    ... ])
-    >>> set(bloc(election, 2))
-    {0, 1}
+    ... ]
+    >>> bloc(election, 2)
+    [1, 0]
+    >>> votepy.solve('bloc', election, 2)
+    [1, 0]
     """
-
-    if not isinstance(voting, OrdinalElection):
-        voting = OrdinalElection(voting)
 
     n = voting.ballot_size
     results = [0] * n
-    if size_of_committee > n or size_of_committee <= 0:
-        raise ValueError(
-            f"Size of committee needs to be from the range 1 to the number of all candidates.")
+
     for vote in voting:
         for candidate in vote[:size_of_committee]:
             results[candidate] += 1
