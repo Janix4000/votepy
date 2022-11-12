@@ -18,7 +18,7 @@ def bloc(voting: Union[OrdinalElection, list[list[int]]], size_of_committee: int
         `list[int]`: List of chosen candidates
 
     ### Examples
-    >>> import votepy
+    >>> import votepy as vp
     >>> election = [
     ...     [0,1,2,3,4],
     ...     [4,0,1,3,2],
@@ -29,7 +29,7 @@ def bloc(voting: Union[OrdinalElection, list[list[int]]], size_of_committee: int
     ... ]
     >>> bloc(election, 2)
     [1, 0]
-    >>> votepy.solve('bloc', election, 2)
+    >>> vp.solve('bloc', election, 2)
     [1, 0]
     """
 
