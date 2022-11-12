@@ -26,7 +26,7 @@ def algo(name: str):
     >>>
     >>> @algo(name='name')
     ... class Algo(BaseAlgorithm):
-    ...     def _solve():
+    ...     def _solve(self):
     ...         pass
     >>>
         get_algorithm('name') == Algo()
@@ -61,7 +61,7 @@ def get_algorithm(algorithm: Union[str, BaseAlgorithm], *args, **kwargs) -> Base
     ...     def __init__(self, arg=0):
     ...         self.arg = arg
     ...
-    ...     def _solve():
+    ...     def _solve(self):
     ...         pass
     ...
     ...     def __eq__(self, rhs):
@@ -159,7 +159,7 @@ def impl(rule: Union[Callable, str], algorithm: BaseAlgorithm):
     >>>
     >>> @algo(name='name')
     ... class Algo(BaseAlgorithm):
-    ...     def _solve():
+    ...     def _solve(self):
     ...         pass # computations
     >>>
     >>> @rule()
@@ -215,7 +215,7 @@ def get_implementation(rule: Union[Callable, str], algorithm: BaseAlgorithm) -> 
     >>>
     >>> @algo(name='name')
     ... class Algo(BaseAlgorithm):
-    ...     def _solve():
+    ...     def _solve(self):
     ...         pass
     >>> @rule()
     ... def some_rule():
@@ -264,7 +264,7 @@ def get_default_algorithm(rule: Union[Callable, str]) -> Union[BaseAlgorithm, No
     >>>
     >>> @algo(name='name')
     ... class Algo(BaseAlgorithm):
-    ...     def _solve():
+    ...     def _solve(self):
     ...         pass
     >>>
     >>> @rule(default_algorithm=Algo)
@@ -299,7 +299,7 @@ def get_default_implementation(rule: Union[Callable, str]) -> Callable:
     >>>
     >>> @algo(name='name')
     ... class Algo(BaseAlgorithm):
-    ...     def _solve():
+    ...     def _solve(self):
     ...         pass
     >>>
     >>> @rule(default_algorithm=Algo)
