@@ -4,7 +4,7 @@ import numpy as np
 from numpy import pi
 from functools import cmp_to_key
 
-from votepy.rules.chamberlin_courant import chamberlin_courant_greedy
+from votepy.rules.chamberlin_courant_imp import chamberlin_courant_greedy
 from votepy.rules.k_borda import k_borda
 from votepy.rules.bloc import bloc
 from votepy.rules.sntv import sntv
