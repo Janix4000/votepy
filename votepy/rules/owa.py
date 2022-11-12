@@ -176,13 +176,13 @@ def owa_k_best(voting, size_of_committee, k, algorithm: OWA = OWA()):
     ...     [4, 3, 1, 2, 5, 0]
     ... ]
     >>> vp.solve('owa_k_best', voting, 3, k=2, algorithm=OWA(Gurobi))
-    [0, 1, 3]
+    [0, 1, 5]
     """
     if not 1 <= k <= size_of_committee:
         raise ValueError(
             f"Expected k to be an integer from range 1 to {size_of_committee}, got: {k}")
     owa_vector = [1] * k + [0] * (size_of_committee - k)
-    owa_ilp(voting, size_of_committee, owa_vector, algorithm)
+    return owa_ilp(voting, size_of_committee, owa_vector, algorithm)
 
 
 @impl('owa_arithmetic_progression', algorithm=OWA)
@@ -210,13 +210,13 @@ def owa_arithmetic_progression(voting, size_of_committee, a, algorithm: OWA = OW
     ...     [4, 3, 1, 2, 5, 0]
     ... ]
     >>> vp.solve('owa_arithmetic_progression', voting, 3, a=2, algorithm=OWA(Gurobi))
-    [0, 1, 3]
+    [0, 1, 5]
     """
     if not a >= 0:
         raise ValueError(
             f"Expected a to be a positive number, got: {a}")
     owa_vector = [a + k for k in range(size_of_committee - 1, -1, -1)]
-    owa_ilp(voting, size_of_committee, owa_vector, algorithm)
+    return owa_ilp(voting, size_of_committee, owa_vector, algorithm)
 
 
 @impl('owa_geometric_progression', algorithm=OWA)
@@ -244,13 +244,13 @@ def owa_geometric_progression(voting, size_of_committee, p, algorithm: OWA = OWA
     ...     [4, 3, 1, 2, 5, 0]
     ... ]
     >>> vp.solve('owa_geometric_progression', voting, 3, p=2, algorithm=OWA(Gurobi))
-    [0, 1, 3]
+    [0, 1, 5]
     """
     if not p > 1:
         raise ValueError(
             f"Expected p to be greater than 1, got: {p}")
     owa_vector = [p ** k for k in range(size_of_committee - 1, -1, -1)]
-    owa_ilp(voting, size_of_committee, owa_vector, algorithm)
+    return owa_ilp(voting, size_of_committee, owa_vector, algorithm)
 
 
 @impl('owa_harmonic', algorithm=OWA)
@@ -277,10 +277,10 @@ def owa_harmonic(voting, size_of_committee, algorithm: OWA = OWA()):
     ...     [4, 3, 1, 2, 5, 0]
     ... ]
     >>> vp.solve('owa_harmonic', voting, 3, algorithm=OWA(Gurobi))
-    [0, 1, 3]
+    [0, 1, 5]
     """
     owa_vector = [1 / k for k in range(1, size_of_committee + 1)]
-    owa_ilp(voting, size_of_committee, owa_vector, algorithm)
+    return owa_ilp(voting, size_of_committee, owa_vector, algorithm)
 
 
 @impl('owa_hurwicz', algorithm=OWA)
@@ -307,14 +307,14 @@ def owa_hurwicz(voting, size_of_committee, p, algorithm: OWA = OWA()):
     ...     [5, 0, 3, 2, 4, 1],
     ...     [4, 3, 1, 2, 5, 0]
     ... ]
-    >>> vp.solve('owa_hurwicz', voting, 3, p=2, algorithm=OWA(Gurobi))
-    [0, 1, 3]
+    >>> vp.solve('owa_hurwicz', voting, 3, p=0.5, algorithm=OWA(Gurobi))
+    [0, 2, 4]
     """
     if not 0 <= p <= 1:
         raise ValueError(
             f"Expected p to be in range 0 to 1, got: {p}")
     owa_vector = [p] + [0] * (size_of_committee - 2) + [1 - p]
-    owa_ilp(voting, size_of_committee, owa_vector, algorithm)
+    return owa_ilp(voting, size_of_committee, owa_vector, algorithm)
 
 if __name__ == '__main__':
     voting = [[0, 1, 2, 4, 5, 3], [0, 1, 2, 4, 5, 3], [0, 1, 2, 4, 5, 3],
