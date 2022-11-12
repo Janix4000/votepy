@@ -1,33 +1,38 @@
-from votepy.ordinal_election import OrdinalElection, OrdinalBallot
+from votepy.ordinal_election import OrdinalElection
+from votepy.meta.structure import rule, impl
 
 from typing import Union
 import numpy as np
 
 
+@impl('sntv', algorithm=None)
+@rule()
 def sntv(voting: Union[OrdinalElection, list[int]], size_of_committee: int) -> list[int]:
-    """Function computes a committee of given size using SNTV rule for specified number of scored candidates.
+    """# Summary
+    Function computes a committee of given size using SNTV rule for specified number of scored candidates.
     In this version for multiple results only arbitrary one is returned.
 
-    Args:
+    ## Args:
         voting (OrdinalElection): voting for which the function calculates the committee
         size_of_committee (int): Size of the committee
 
-    Raises:
-        ValueError: Size of commite is a positive number which do not exceeds number of all candidates
-        ValueError: Number of candidates scored in SNTV is a positive number which do not exceeds number of all candidates
-
     Returns:
         list[int]: List of chosen candidates
+
+    ## Examples
+        >>> import votepy as vp
+        >>> voting = [
+        ...     [0, 1, 2, 3],
+        ...     [3, 2, 1, 0],
+        ...     [2, 1, 3, 0],
+        ...     [2, 1, 3, 0],
+        ... ]
+        >>> sntv(voting, 2)
+        [2, 0]
+        >>> vp.solve('sntv', voting, 2)
+        [2, 0]
     """
-
-    if not isinstance(voting, OrdinalElection):
-        voting = OrdinalElection(voting)
-
     n = voting.ballot_size
-    if size_of_committee > n or size_of_committee <= 0:
-        raise ValueError(
-            f"Size of committee needs to be from the range 1 to the number of all candidates.")
-
     results = np.zeros(n)
     for vote in voting:
         results[vote[0]] += 1
@@ -37,9 +42,12 @@ def sntv(voting: Union[OrdinalElection, list[int]], size_of_committee: int) -> l
 
 
 if __name__ == '__main__':
-    print(sntv([
+    import votepy as vp
+    voting = [
         [0, 1, 2, 3],
         [3, 2, 1, 0],
         [2, 1, 3, 0],
         [2, 1, 3, 0],
-    ], 2))
+    ]
+    print(sntv(voting, 2))
+    print(vp.solve(sntv, voting, 2))
