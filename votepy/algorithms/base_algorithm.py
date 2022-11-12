@@ -1,3 +1,4 @@
+from typing import Union
 from votepy.ordinal_election import OrdinalElection
 
 from abc import abstractmethod, ABC
@@ -16,7 +17,7 @@ class BaseAlgorithm(ABC):
     def _solve(self, voting: OrdinalElection, size_of_committee: int) -> list[int]:
         pass
 
-    def solve(self, voting: OrdinalElection, size_of_committee: int) -> list[int]:
+    def solve(self, voting: Union[OrdinalElection, list[list[int]]], size_of_committee: int) -> list[int]:
         """Solves a voting using the specified algorithm, which must be fully prepared for the election rule. It assures all runtime checks.
 
         Args:

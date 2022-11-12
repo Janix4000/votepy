@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Optional
+from typing import Any, Iterable, Optional, Type, Union
 from warnings import warn
 
 
@@ -28,7 +28,7 @@ class Solver(ABC):
         pass
 
     @abstractmethod
-    def addConstraint(self, name: str, variables: list[object],
+    def addConstraint(self, name: str, variables: Iterable[Any],
                       coeffs: list[float], rhs: float, sense: str):
         """Add a constraint to the model.
 
@@ -107,7 +107,7 @@ class CPLEX(Solver):
                     obj: float = 0.0,
                     lb: Optional[float] = None,
                     ub: Optional[float] = None):
-        self.colnames.append(name)
+        self.col_names.append(name)
         self.obj.append(obj)
         if lb is not None:
             self.lb.append(lb)
@@ -116,7 +116,7 @@ class CPLEX(Solver):
         self.ctypes.append(vartype)
         return name
 
-    def addConstraint(self, name: str, variables: list[object],
+    def addConstraint(self, name: str, variables: Iterable[Any],
                       coeffs: list[float], rhs: float, sense: str):
         self.row_names.append(name)
         self.rows.append([variables, coeffs])
@@ -138,12 +138,11 @@ class CPLEX(Solver):
                                      lb=self.lb,
                                      ub=self.ub,
                                      types=''.join(self.ctypes),
-                                     names=self.colnames)
-        print(self.rows)
+                                     names=self.col_names)
         self.model.linear_constraints.add(lin_expr=self.rows,
                                           senses=''.join(self.senses),
                                           rhs=self.rhs,
-                                          names=self.rownames)
+                                          names=self.row_names)
         self.model.solve()
 
     def getValues(self):
@@ -200,7 +199,7 @@ class Gurobi(Solver):
             self.objective.append(obj * var)
         return var
 
-    def addConstraint(self, name: str, variables: list[object],
+    def addConstraint(self, name: str, variables: Iterable[Any],
                       coeffs: list[float], rhs: float, sense: str):
         expr = sum([v * c for v, c in zip(variables, coeffs)])
         if sense == 'L':
@@ -231,3 +230,7 @@ class Gurobi(Solver):
         except self.gp.GurobiError:
             print("The model is feasible!")
         self.model.write(filename)
+
+
+solver_t = Union[Type[CPLEX], Type[Gurobi]]
+model_t = Union[CPLEX, Gurobi]
