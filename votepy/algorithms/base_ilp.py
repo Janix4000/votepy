@@ -1,7 +1,7 @@
 from typing import Callable, Type, Union
 from votepy.ordinal_election import OrdinalElection
 from votepy.algorithms.base_algorithm import BaseAlgorithm
-from votepy.structure.structure import algo
+from votepy.meta.structure import algo
 from votepy.generic_ilp import Gurobi, solver_t, model_t
 
 
