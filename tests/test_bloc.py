@@ -1,4 +1,4 @@
-from votepy.bloc import bloc
+from votepy.rules.bloc import bloc
 from votepy.ordinal_election import OrdinalElection
 import os
 
@@ -11,7 +11,7 @@ alpha = 0.99
 
 def scoring(voting: OrdinalElection, committee: list[int]) -> float:
     committee_size = len(committee)
-    score = 0.0 
+    score = 0.0
     for ballot in voting:
         for candidate in committee:
             score += 1.0 if ballot.pos(candidate) < committee_size else 0.0
