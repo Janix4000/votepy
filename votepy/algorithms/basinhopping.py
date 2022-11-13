@@ -51,7 +51,6 @@ class BasinHopping(BaseAlgorithm):
 
         print(chosen, rest)
 
-        # chosen = np.arange(size_of_committee, dtype=int)
         # rest = np.arange(size_of_committee, voting.ballot_size, dtype=int)
 
         def optimize(x: np.ndarray):
