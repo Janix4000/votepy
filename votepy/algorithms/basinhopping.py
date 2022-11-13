@@ -9,7 +9,6 @@ from typing import Callable, Iterable
 
 
 @algo('basinhopping')
-# .
 class BasinHopping(BaseAlgorithm):
     def __init__(self, x0: Iterable[int] = None, niter: int = 10, seed: int = None, minimizer_kwargs: dict = {}, **kwargs):
         """# Summary
