@@ -117,7 +117,7 @@ def chamberlin_courant_basinhopping(voting: Union[OrdinalElection, list[int]], s
 
 
 @impl(chamberlin_courant, ILP)
-def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[list[int]]], size_of_committee: int, algorithm: ILP = ILP(Gurobi)) -> list[int]:
+def chamberlin_courant_ilp(voting: Union[list[list[int]], OrdinalElection], size_of_committee: int, algorithm: ILP = ILP(Gurobi)) -> list[int]:
     """Implementation of the chamberlin-courant rule, using ILP formulation by:
     Peters, Dominik & Lackner, Martin. (2020).
     Preferences Single-Peaked on a Circle.
@@ -161,7 +161,7 @@ def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[list[int]]], size
 # For now leaving without annotation - if it's easy to add different
 # implementations of the same rule and algorithm, then I think we should do
 # that. To use this function, you need to call it explicitly.
-def chamberlin_courant_ilp_custom(voting: Union[OrdinalElection, list[list[int]]], size_of_committee: int, algorithm: ILP = ILP(Gurobi)) -> list[int]:
+def chamberlin_courant_ilp_custom(voting: Union[list[list[int]], OrdinalElection], size_of_committee: int, algorithm: ILP = ILP(Gurobi)) -> list[int]:
     """Custom implementation of the chamberlin courant rule.
 
     Args:

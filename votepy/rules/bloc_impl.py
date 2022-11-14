@@ -6,7 +6,7 @@ from typing import Union
 
 @impl('bloc', algorithm=None)
 @rule()
-def bloc(voting: Union[OrdinalElection, list[list[int]]], size_of_committee: int) -> list[int]:
+def bloc(voting: Union[list[list[int]], OrdinalElection], size_of_committee: int) -> list[int]:
     """# Summary
     Function computes a committee of given size using Bloc rule for specified number of favorite candidates.
 

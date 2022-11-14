@@ -42,7 +42,7 @@ def owa(voting: Union[OrdinalElection,
 
 
 @impl(owa, ILP)
-def owa_ilp(voting: Union[OrdinalElection, list[list[int]]],
+def owa_ilp(voting: Union[list[list[int]], OrdinalElection],
             size_of_committee: int,
             owa_vector: list[float],
             algorithm: OWA = OWA()):
@@ -118,7 +118,7 @@ def owa_ilp(voting: Union[OrdinalElection, list[list[int]]],
 
 @impl('owa_k_median', algorithm=OWA)
 @rule()
-def owa_k_median(voting: Union[OrdinalElection, list[list[int]]], size_of_committee: int, k: int, algorithm: OWA = OWA()):
+def owa_k_median(voting: Union[list[list[int]], OrdinalElection], size_of_committee: int, k: int, algorithm: OWA = OWA()):
     """# Calculates committee using owa_ilp with owa_vector set to k-1 zeros, single one and followed by size_of_committee - k zeros
 
     ### Args:
