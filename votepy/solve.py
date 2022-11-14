@@ -46,7 +46,7 @@ def solve(rule: Union[Callable, str], voting: Union[OrdinalElection, list[list[i
 
 
 if __name__ == '__main__':
-    from votepy.rules.k_borda import k_borda
+    from votepy.rules.k_borda_impl import k_borda
     solve(k_borda, [
         [0, 1, 2, 3],
         [3, 2, 1, 0],
