@@ -48,9 +48,6 @@ class BasinHopping(BaseAlgorithm):
         chosen = np.array(self.x0) if self.x0 is not None else np.arange(size_of_committee, dtype=int)
         rest = np.array(list(set(range(voting.ballot_size)) - set(chosen)))
 
-        print(chosen, rest)
-
-
         def optimize(x: np.ndarray):
             nonlocal self, voting
             return -self.scoring_function(x.astype(int), voting)
