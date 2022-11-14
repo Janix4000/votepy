@@ -1,4 +1,4 @@
-from votepy.algorithms.basinhopping import BasinHopping
+from votepy.algorithms.basin_hopping import BasinHopping
 from votepy.ordinal_election import OrdinalElection
 from votepy.rules.chamberlin_courant_impl import chamberlin_courant as cc, scoring_function as cc_score
 
