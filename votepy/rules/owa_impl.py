@@ -1,7 +1,7 @@
 from typing import Type, Union
 from votepy.ordinal_election import OrdinalElection
 from votepy.generic_ilp import CPLEX, Gurobi
-from votepy.rules.chamberlin_courant_imp import chamberlin_courant
+from votepy.rules.chamberlin_courant_impl import chamberlin_courant
 from votepy.rules.k_borda import k_borda
 from votepy.meta.structure import algo, rule, impl
 from votepy.solve import solve

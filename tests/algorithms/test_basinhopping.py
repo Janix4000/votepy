@@ -1,6 +1,6 @@
 from votepy.algorithms.basinhopping import BasinHopping
 from votepy.ordinal_election import OrdinalElection
-from votepy.rules.chamberlin_courant_imp import chamberlin_courant as cc, scoring_function as cc_score
+from votepy.rules.chamberlin_courant_impl import chamberlin_courant as cc, scoring_function as cc_score
 
 voting = OrdinalElection([
     [0, 1, 2, 3, 4],
