@@ -7,7 +7,7 @@ from votepy.meta.structure import rule, impl
 from votepy.solve import solve
 
 from votepy.algorithms.base_algorithm import BaseAlgorithm
-from votepy.algorithms.generic_brute_force import BruteForce
+from votepy.algorithms.brute_force import BruteForce
 from votepy.algorithms.generic_greedy import Greedy
 from votepy.algorithms.basinhopping import BasinHopping
 from votepy.algorithms.ilp import ILP
