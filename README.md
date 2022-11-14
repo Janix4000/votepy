@@ -1,4 +1,4 @@
-i# Votepy
+# Votepy
 ![Tests](https://github.com/Janix4000/votepy/actions/workflows/tests.yml/badge.svg)
 
 Votepy provides ready to use tools to calculate multiwinning ordinal elections, under a different voting rules.
