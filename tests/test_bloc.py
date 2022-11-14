@@ -1,4 +1,4 @@
-from votepy.rules.bloc import bloc
+from votepy.rules.bloc_impl import bloc
 from votepy.ordinal_election import OrdinalElection
 import os
 
