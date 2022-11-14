@@ -8,7 +8,7 @@ from votepy.ordinal_election import OrdinalElection
 
 
 algorithms: dict[str, BaseAlgorithm] = dict()
-default_algorithms: dict[str, BaseAlgorithm] = dict()
+default_algorithms: dict[str, Union[Type[BaseAlgorithm], None]] = dict()
 rules: dict[str, Callable] = dict()
 implementations: dict[str, dict[str, Callable]] = dict()
 
@@ -142,7 +142,7 @@ def rule(name: str = None, default_algorithm: Union[BaseAlgorithm, str] = None):
     return actual_decorator
 
 
-def impl(rule: Union[Callable, str], algorithm: Type[BaseAlgorithm]):
+def impl(rule: Union[Callable, str], algorithm: Union[Type[BaseAlgorithm], None]):
     """# Summary
     Decorator used to register specific implementation of the voting rule solving function, using algorithm
     If rule has only only one implementation, independent to the any algorithm,this rule function can be decorated with 
