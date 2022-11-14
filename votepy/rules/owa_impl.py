@@ -1,7 +1,7 @@
 from typing import Type, Union
 from votepy.ordinal_election import OrdinalElection
 from votepy.generic_ilp import CPLEX, Gurobi
-from votepy.rules.chamberlin_courant import chamberlin_courant
+from votepy.rules.chamberlin_courant_impl import chamberlin_courant
 from votepy.rules.k_borda import k_borda
 from votepy.meta.structure import algo, rule, impl
 from votepy.solve import solve
@@ -50,7 +50,7 @@ def owa_ilp(voting: Union[OrdinalElection, list[list[int]]],
     ILP implementation of the OWA rule as described by:
     Piotr Skowron, Piotr Faliszewski, Jerome Lang
     Finding a Collective Set of Items: From Proportional Multirepresentation to Group Recommendation
-	arXiv:1402.3044
+        arXiv:1402.3044
 
     Variables are named exactly as in the paper, to make cross-checking easier.
     """
@@ -315,6 +315,7 @@ def owa_hurwicz(voting, size_of_committee, p, algorithm: OWA = OWA()):
             f"Expected p to be in range 0 to 1, got: {p}")
     owa_vector = [p] + [0] * (size_of_committee - 2) + [1 - p]
     return owa_ilp(voting, size_of_committee, owa_vector, algorithm)
+
 
 if __name__ == '__main__':
     voting = [[0, 1, 2, 4, 5, 3], [0, 1, 2, 4, 5, 3], [0, 1, 2, 4, 5, 3],

@@ -9,6 +9,7 @@ from votepy.solve import solve
 from votepy.algorithms.base_algorithm import BaseAlgorithm
 from votepy.algorithms.generic_brute_force import BruteForce
 from votepy.algorithms.generic_greedy import Greedy
+from votepy.algorithms.basinhopping import BasinHopping
 from votepy.algorithms.base_ilp import ILP
 from votepy.generic_ilp import CPLEX, Gurobi, model_t, solver_t
 
@@ -106,6 +107,14 @@ def chamberlin_courant_p_algorithm(voting: Union[OrdinalElection, list[int]], si
 
     algorithm.prepare(scoring_function)
     return algorithm.solve(voting, size_of_committee)
+
+
+@impl(chamberlin_courant, BasinHopping)
+def chamberlin_courant_basinhopping(voting: Union[OrdinalElection, list[int]], size_of_committee: int,
+                                    algorithm: BasinHopping = BasinHopping()):
+    algorithm.prepare(scoring_function)
+    return algorithm.solve(voting, size_of_committee)
+
 
 @impl(chamberlin_courant, ILP)
 def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[list[int]]], size_of_committee: int, algorithm: ILP = ILP(Gurobi)) -> list[int]:
