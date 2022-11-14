@@ -10,8 +10,8 @@ def solve(rule: Union[Callable, str], voting: Union[list[list[int]], OrdinalElec
 
     ## Args:
         `rule` (Callable | str): Voting rule function or its identification name
-        `voting` (Union[OrdinalElection, list[int]]): Voting for which the function calculates the committee
-        `size_of_committee` (int): Size of the committee
+        `voting` (Union[list[list[int]], OrdinalElection]): Voting for which the function calculates the committee
+        `size_of_committee` (`int`): Size of the committee
         `algorithm` (BaseAlgorithm): Voting solving algorithm or its identification name.
         `*rule_args`: Additional voting functions' arguments
         `*rule_kwargs`: Additional voting functions' positional arguments

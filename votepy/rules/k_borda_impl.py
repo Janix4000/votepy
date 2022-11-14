@@ -9,20 +9,18 @@ from typing import Union
 
 @impl('k_borda', algorithm=None)
 @rule()
-def k_borda(voting: Union[OrdinalElection, list[int]], size_of_committee: int) -> list[int]:
+def k_borda(voting: Union[list[list[int]], OrdinalElection], size_of_committee: int) -> list[int]:
     """# Summary
     Function computes a committee of given size using k-borda rule for specified number of scored candidates.
     In this version for multiple results only arbitrary one is returned.
 
     ## Args:
-        voting (OrdinalElection): voting for which the function calculates the committee
-        size_of_committee (int): Size of the committee
-
-    ## Raises:
-        ValueError: Size of committee is a positive number which do not exceeds number of all candidates
+        voting (`list[list[int]]` | `OrdinalElection`): voting for which the function calculates the committee
+        size_of_committee (`int`): Size of the committee
 
     ## Returns:
-        OrdinalBallot: List of chosen candidates wrapped in ordinalBallot
+        `list[int]`: List of chosen candidates
+
     ## Examples
     >>> import votepy as vp
     >>> voting = [

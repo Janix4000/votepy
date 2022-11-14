@@ -33,7 +33,7 @@ class OrdinalBallot(list):
     def pos(self, candidate: int) -> int:
         """Returns position of the candidate in voting/preference in O(1) time.
         Args:
-            candidate (int): Index of the candidate. Must be in range of [0, <ordering_length>-1].
+            candidate (`int`): Index of the candidate. Must be in range of [0, <ordering_length>-1].
         Returns:
             int: Position of the candidate.
         """
