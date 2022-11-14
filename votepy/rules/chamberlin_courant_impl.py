@@ -8,7 +8,7 @@ from votepy.solve import solve
 
 from votepy.algorithms.base_algorithm import BaseAlgorithm
 from votepy.algorithms.brute_force import BruteForce
-from votepy.algorithms.generic_greedy import Greedy
+from votepy.algorithms.greedy import Greedy
 from votepy.algorithms.basinhopping import BasinHopping
 from votepy.algorithms.ilp import ILP
 from votepy.generic_ilp import CPLEX, Gurobi, model_t, solver_t
