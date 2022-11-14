@@ -20,8 +20,8 @@ def solve(rule: Union[Callable, str], voting: Union[OrdinalElection, list[list[i
         -> list[int]: List of chosen candidates
 
     ## Examples
-    >>> from votepy.rules.k_borda import k_borda
-    >>> solve(k_borda, [
+    >>> import votepy.rules.k_borda_impl
+    >>> solve('k_borda', [
     ...     [0, 1, 2, 3],
     ...     [3, 2, 1, 0],
     ...     [2, 1, 3, 0]
