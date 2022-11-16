@@ -6,7 +6,7 @@ Votepy provides ready-to-use tools to calculate multi-winning ordinal elections,
 ## Installation 
 
  1. Clone the repository: `git clone URL path/to/lib`
- 2. Create and source new virtual environment: `cd path/to/project && python3 -m venv venv && source venv/bin/activate`
+ 2. Create and source new virtual environment: `cd path/to/lib && python3 -m venv venv && source venv/bin/activate`
  3. Install the main package: `pip3 install -e path/to/lib/votepy`
 
 ## Usage
