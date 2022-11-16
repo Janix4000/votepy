@@ -8,7 +8,7 @@ import random
 from typing import Callable, Iterable
 
 
-@algo('basinhopping')
+@algo('basin_hopping')
 class BasinHopping(BaseAlgorithm):
     def __init__(self, x0: Iterable[int] = None, niter: int = 10, seed: int = None, minimizer_kwargs: dict = {}, **kwargs):
         """# Summary

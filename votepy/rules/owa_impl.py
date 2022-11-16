@@ -5,7 +5,7 @@ from votepy.rules.chamberlin_courant_impl import chamberlin_courant
 from votepy.rules.k_borda_impl import k_borda
 from votepy.meta.structure import algo, rule, impl
 from votepy.solve import solve
-from votepy.algorithms.base_ilp import ILP
+from votepy.algorithms.ilp import ILP
 from votepy.generic_ilp import Solver
 
 import numpy as np
