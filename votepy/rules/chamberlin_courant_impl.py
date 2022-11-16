@@ -17,12 +17,12 @@ from typing import Type, Union, Iterable
 
 
 @rule()
-def chamberlin_courant(voting: Union[OrdinalElection, list[int]], size_of_committee: int, algorithm: BaseAlgorithm) -> \
+def chamberlin_courant(voting: Union[list[list[int]], OrdinalElection], size_of_committee: int, algorithm: BaseAlgorithm) -> \
         list[int]:
     """# Summary
     Chamberlin-Courant rule
     ## Args:
-        `voting` (`OrdinalElection | list[int]`): Voting for which the function calculates the committee
+        `voting` (`list[list[int]]` | `OrdinalElection`): Voting for which the function calculates the committee
         `size_of_committee` (`int`): Size of the committee
 
     ## Returns:
@@ -84,7 +84,7 @@ def chamberlin_courant_greedy(voting, size_of_committee, algorithm: Greedy = Gre
 
 # Based on https://arxiv.org/abs/1901.09217
 @impl(chamberlin_courant, PAlgorithm)
-def chamberlin_courant_p_algorithm(voting: Union[OrdinalElection, list[int]], size_of_committee: int,
+def chamberlin_courant_p_algorithm(voting: Union[list[list[int]], OrdinalElection], size_of_committee: int,
                                    algorithm: PAlgorithm = PAlgorithm()) -> list[int]:
     def scoring_function(voting: OrdinalElection, size_of_committee: int, threshold: int) -> list[int]:
         scores = collections.defaultdict(int)
@@ -110,22 +110,22 @@ def chamberlin_courant_p_algorithm(voting: Union[OrdinalElection, list[int]], si
 
 
 @impl(chamberlin_courant, BasinHopping)
-def chamberlin_courant_basinhopping(voting: Union[OrdinalElection, list[int]], size_of_committee: int,
+def chamberlin_courant_basinhopping(voting: Union[list[list[int]], OrdinalElection], size_of_committee: int,
                                     algorithm: BasinHopping = BasinHopping()):
     algorithm.prepare(scoring_function)
     return algorithm.solve(voting, size_of_committee)
 
 
 @impl(chamberlin_courant, ILP)
-def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[list[int]]], size_of_committee: int, algorithm: ILP = ILP(Gurobi)) -> list[int]:
+def chamberlin_courant_ilp(voting: Union[list[list[int]], OrdinalElection], size_of_committee: int, algorithm: ILP = ILP(Gurobi)) -> list[int]:
     """Implementation of the chamberlin-courant rule, using ILP formulation by:
     Peters, Dominik & Lackner, Martin. (2020).
     Preferences Single-Peaked on a Circle.
     Journal of Artificial Intelligence Research. 68. 463-502. 10.1613/jair.1.11732.
 
     Args:
-        voting (Union[OrdinalElection, list[int]]): Voting for which the function calculates the committee
-        size_of_committee (int): Size of the committee
+        voting (Union[list[list[int]], OrdinalElection]): Voting for which the function calculates the committee
+        size_of_committee (`int`): Size of the committee
     Returns:
         list[int]: List of chosen candidates
     """
@@ -161,12 +161,12 @@ def chamberlin_courant_ilp(voting: Union[OrdinalElection, list[list[int]]], size
 # For now leaving without annotation - if it's easy to add different
 # implementations of the same rule and algorithm, then I think we should do
 # that. To use this function, you need to call it explicitly.
-def chamberlin_courant_ilp_custom(voting: Union[OrdinalElection, list[list[int]]], size_of_committee: int, algorithm: ILP = ILP(Gurobi)) -> list[int]:
+def chamberlin_courant_ilp_custom(voting: Union[list[list[int]], OrdinalElection], size_of_committee: int, algorithm: ILP = ILP(Gurobi)) -> list[int]:
     """Custom implementation of the chamberlin courant rule.
 
     Args:
-        voting (Union[OrdinalElection, list[int]]): Voting for which the function calculates the committee
-        size_of_committee (int): Size of the committee
+        voting (Union[list[list[int]], OrdinalElection]): Voting for which the function calculates the committee
+        size_of_committee (`int`): Size of the committee
     Returns:
         list[int]: List of chosen candidates
     """

@@ -4,14 +4,14 @@ from votepy.algorithms.base_algorithm import BaseAlgorithm
 from votepy.meta.structure import get_algorithm, get_default_algorithm, get_implementation
 
 
-def solve(rule: Union[Callable, str], voting: Union[OrdinalElection, list[list[int]]], size_of_committee: int, *rule_args, algorithm: BaseAlgorithm = None, **rule_kwargs) -> list[int]:
+def solve(rule: Union[Callable, str], voting: Union[list[list[int]], OrdinalElection], size_of_committee: int, *rule_args, algorithm: BaseAlgorithm = None, **rule_kwargs) -> list[int]:
     """# Summary
     Calculates committee of the given size, based on the voting rule, using algorithm.
 
     ## Args:
         `rule` (Callable | str): Voting rule function or its identification name
-        `voting` (Union[OrdinalElection, list[int]]): Voting for which the function calculates the committee
-        `size_of_committee` (int): Size of the committee
+        `voting` (Union[list[list[int]], OrdinalElection]): Voting for which the function calculates the committee
+        `size_of_committee` (`int`): Size of the committee
         `algorithm` (BaseAlgorithm): Voting solving algorithm or its identification name.
         `*rule_args`: Additional voting functions' arguments
         `*rule_kwargs`: Additional voting functions' positional arguments

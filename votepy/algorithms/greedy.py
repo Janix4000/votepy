@@ -9,15 +9,17 @@ from typing import Callable, Iterable
 @algo(name='greedy')
 class Greedy(BaseAlgorithm):
     def __init__(self):
-        """A generic greedy algorithm that calculates the winning committee using a given scoring function.
+        """# Summary
+        A generic greedy algorithm that calculates the winning committee using a given scoring function.
         """
         super().__init__()
 
-    def prepare(self, scoring_function: Callable[[Iterable[int], OrdinalElection, int], int]):
-        """Prepare the scoring function. Should be invoked only by the voting rule function.
+    def prepare(self, scoring_function: Callable[[Iterable[int], OrdinalElection, int], float]):
+        """# Summary
+        Prepare the scoring function. Should be invoked only by the voting rule function.
 
-        Args:
-            `scoring_function` (`(Iterable[int], OrdinalElection, int) -> int`): The scoring function used to determine the best committee. It should take the committee, election and candidate as parameters and return the score of that committee.
+        ## Args:
+            `scoring_function` (`(Iterable[int], OrdinalElection, int) -> float`): The scoring function used to determine the best committee. It should take the committee, election and candidate as parameters and return the score of that committee.
         """
         self.scoring_function = scoring_function
         super().prepare()

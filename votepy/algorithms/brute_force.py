@@ -9,15 +9,17 @@ from typing import Callable, Iterable
 @algo(name='brute_force')
 class BruteForce(BaseAlgorithm):
     def __init__(self):
-        """A generic brute force algorithm that calculates the winning committee using a given scoring function
+        """# Summary
+        A generic brute force algorithm that calculates the winning committee using a given scoring function
         """
         super().__init__()
 
-    def prepare(self, scoring_function: Callable[[Iterable[int], OrdinalElection], int]) -> None:
-        """Prepare the scoring function. Should be invoked only by the voting rule function.
+    def prepare(self, scoring_function: Callable[[Iterable[int], OrdinalElection], float]) -> None:
+        """# Summary
+        Prepare the scoring function. Should be invoked only by the voting rule function.
 
-        Args:
-            `scoring_function` (`(Iterable[int], OrdinalElection) -> int`): The scoring function used to determine the best committee. It should take the committee and election as parameters and return the score of that committee.
+        ## Args:
+            `scoring_function` (`(Iterable[int], OrdinalElection) -> float`): The scoring function used to determine the best committee. It should take the committee and election as parameters and return the score of that committee.
         """
         self.scoring_function = scoring_function
         super().prepare()

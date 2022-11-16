@@ -14,7 +14,7 @@ class BasinHopping(BaseAlgorithm):
         """# Summary
         Numeric voting solving method based on the `scipy.optimize.basinhopping`
 
-        # Args:
+        ## Args:
             `x0` (Iterable[int], optional): Initial committee guess. Defaults to `None`.
             `niter` (int, optional): Number of iterations. Defaults to `10`.
             `seed` (int, optional): Random seed. Defaults to `None`.

@@ -9,7 +9,8 @@ from votepy.meta.structure import algo, BaseAlgorithm
 @algo(name='p_algorithm')
 class PAlgorithm(BaseAlgorithm):
     def __init__(self):
-        """An algorithm that calculates the winning committee using a scoring function given in votepy/chamberlin_courant.py.
+        """# Summary
+        An algorithm that calculates the winning committee using a scoring function given in votepy/chamberlin_courant.py.
         Algorithm based on https://doi.org/10.1016/j.artint.2015.01.003
         """
         super().__init__()
@@ -25,11 +26,12 @@ class PAlgorithm(BaseAlgorithm):
     def __simple_profile_score(self, voting, committee):
         return sum([self.__simple_score(vote, committee) for vote in voting])
 
-    def prepare(self, scoring_function: Callable[[Iterable[int], int, int], list[int]]):
-        """Prepare the scoring function. Should be invoked only by the voting rule function.
+    def prepare(self, scoring_function: Callable[[Iterable[int], int, float], list[int]]):
+        """# Summary
+        Prepare the scoring function. Should be invoked only by the voting rule function.
 
-        Args:
-            `scoring_function` (`(Iterable[int], int, int) -> int`): The scoring function used to determine the best committee. It should take the committee, election and threshold as the parameters and return the score of that committee.
+        ## Args:
+            `scoring_function` (`(Iterable[int], int, int) -> float`): The scoring function used to determine the best committee. It should take the committee, election and threshold as the parameters and return the score of that committee.
         """
         self.scoring_function = scoring_function
         super().prepare()
