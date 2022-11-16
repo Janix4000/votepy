@@ -6,7 +6,7 @@ from functools import cmp_to_key
 
 from votepy.rules.chamberlin_courant_impl import chamberlin_courant_greedy
 from votepy.rules.k_borda_impl import k_borda
-from votepy.rules.bloc_impl import bloc
+from votepy.rules.bloc_rule import bloc
 from votepy.rules.sntv_impl import sntv
 
 
