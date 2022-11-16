@@ -81,19 +81,38 @@ committee = vp.solve('bloc', voting, committee_size) # this is equivalent of cal
 ### Voting-solving algorithms
 Some of the voting rules are extremely costly to compute and finding the best committee may be very time-consuming for a greater number of candidates and voters. Luckily, many voting rules are defined by the maximization of some objective function (`scoring function`), so the best committees can be approximated using different tricks and methods. 
 
-Let's look at the `chamberlin_courant` (shortly `cc`) rule, which turns out to be NP-Complete, and so no efficient algorithm is known for finding the best committees for the given election. For such a rules additional parameter `algorithm` must be provided:
+Let's look at the `chamberlin_courant` (shortly `cc`) rule, which turns out to be NP-Complete, and so no efficient algorithm is known for finding the best committees for the given election. For such a rules additional parameter `algorithm` must be provided. Algorithms can be specified by their name:
 
 ```py
 committee = vp.rules.chamberlin_courant(voting, committee_size, algorithm='brute_force')
 ```
 
-In this case, the `brute force` algorithm will check every possible combination of the candidates and take the best one to create committee. There are of course better methods for getting exact solutions. We can check all algorithms implemented for the cc rule:
+or by using their corresponding algorithms objects:
+
+```py
+from votepy.algorithms import BruteForce
+
+# this is equivalent of 'brute_force' string name
+committee = vp.rules.chamberlin_courant(voting, committee_size, algorithm=BruteForce()) 
+```
+
+In this case, the `brute force` algorithm will check every possible combination of the candidates and take the best one to create committee.
+
+Some algorithms can accept additional parameters, and it is only possible by using their corresponding classes:
+
+```py
+from votepy.algorithms import BasinHopping # numeric algorithm, similar to simulated annealing, giving approximate results 
+
+committee = vp.rules.chamberlin_courant(voting, committee_size, algorithm=BasinHopping(niter=100, seed=1))
+```
+
+There are better methods than brute force for getting exact solutions. We can check all algorithms implemented for the cc rule:
 
 ```py
 print(vp.get_algorithms('chamberlin_courant')) # prints rule_name->algorithm_class dictionary
 ```
 
-One of the most common technice used for solving NP-Complete problems is using `ILP` solvers. However, in contrast to the brute force algorithm, we need to specify solver engine during the initialization of the ILP. Fortunately, all votepy's functions accepts also constructed objects as algorithm parameter:
+One of the most common technice used for solving NP-Complete problems is using `ILP` solvers. However, in contrast to the brute force algorithm, we need to specify solver engine during the initialization of the ILP.
 ```py
 from votepy.algorithms import ILP
 from votepy.generic_ilp import Gurobi # Gurobi solver must be previously installed and activated on the machine
