@@ -96,7 +96,7 @@ print(vp.get_algorithms('chamberlin_courant')) # prints rule_name->algorithm_cla
 One of the most common technice used for solving NP-Complete problems is using `ILP` solvers. However, in contrast to the brute force algorithm, we need to specify solver engine during the initialization of the ILP. Fortunately, all votepy's functions accepts also constructed objects as algorithm parameter:
 ```py
 from votepy.algorithms import ILP
-from votepy.generic_ilp import Gurobi # Gurobi solver must be previously installed on the machine
+from votepy.generic_ilp import Gurobi # Gurobi solver must be previously installed and activated on the machine
 
 committee = vp.rules.chamberlin_courant(voting, committee_size, algorithm=ILP(Gurobi))
 ```
