@@ -20,7 +20,6 @@ def solve(rule: Union[Callable, str], voting: Union[list[list[int]], OrdinalElec
         -> list[int]: List of chosen candidates
 
     ## Examples
-    >>> import votepy.rules.k_borda_impl
     >>> solve('k_borda', [
     ...     [0, 1, 2, 3],
     ...     [3, 2, 1, 0],
@@ -46,7 +45,7 @@ def solve(rule: Union[Callable, str], voting: Union[list[list[int]], OrdinalElec
 
 
 if __name__ == '__main__':
-    from votepy.rules.k_borda_impl import k_borda
+    from votepy.rules.k_borda_rule import k_borda
     solve(k_borda, [
         [0, 1, 2, 3],
         [3, 2, 1, 0],
