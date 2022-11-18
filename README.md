@@ -29,7 +29,7 @@ m = 3
 voting = [
     [2, 1, 3, 0], # first voter's preference
     [1, 2, 3, 0], # second voter's preference
-    [3, 0, 3, 1]  # third voter's preference
+    [3, 0, 2, 1]  # third voter's preference
 ]
 ```
 
@@ -46,7 +46,7 @@ single_voting_preference = OrdinalBallot([2, 1, 3, 0], mapping=mapping)
 voting = OrdinalElection([
     [2, 1, 3, 0], # first voter's preference
     [1, 2, 3, 0], # second voter's preference
-    [3, 0, 3, 1]  # third voter's preference
+    [3, 0, 2, 1]  # third voter's preference
 ], mapping=mapping)
 
 print(voting) # prints election using mapping representation
