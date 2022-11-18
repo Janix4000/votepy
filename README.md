@@ -5,7 +5,7 @@ Votepy provides ready-to-use tools to calculate multi-winning ordinal elections,
 
 ## Installation 
 
- 1. Clone the repository: `git clone URL path/to/lib`
+ 1. Clone the repository: `git clone https://github.com/Janix4000/votepy.git path/to/lib`
  2. Create and source new virtual environment: `cd path/to/your/project && python3 -m venv venv && source venv/bin/activate`
  3. Install the main package: `pip3 install -e path/to/lib/votepy`
 
@@ -123,7 +123,7 @@ committee = vp.rules.chamberlin_courant(voting, committee_size, algorithm=ILP(Gu
 
 ## Contribution guide
 
- 1. Clone the repository: `git clone URL && cd votepy`
+ 1. Clone the repository: `git clone https://github.com/Janix4000/votepy.git && cd votepy`
  2. Create and source new virtual environment: `python3 -m venv venv && source venv/bin/activate`
  3. Install the main package: `pip3 install -e .`
  4. Install development packages: `pip3 install -r ./requirements_dev.txt`
