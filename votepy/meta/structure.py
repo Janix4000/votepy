@@ -135,8 +135,6 @@ def rule(name: str = None, default_algorithm: Union[BaseAlgorithm, str] = None):
         implementations[rule_name] = {}
         if default_algorithm is not None:
             default_algorithms[rule_name] = get_algorithm(default_algorithm).__class__
-        else:
-            default_algorithms[rule_name] = None
 
         return wrapper
     return actual_decorator
@@ -185,11 +183,17 @@ def impl(rule: Union[Callable, str], algorithm: Union[Type[BaseAlgorithm], None]
         def wrapper(*args, **kwargs):
             return implementation(*args, **kwargs)
 
-        rule_name = rule if isinstance(rule, str) else rule.__name__
+        rule_name = __get_rule_name(rule)
 
         algorithm_name = __get_algo_name(algorithm)
 
+        if algorithm_name in implementations[rule_name]:
+            raise ValueError(f"Implementation of the {algorithm_name} for the {rule_name} already exists.")
+
         implementations[rule_name][algorithm_name] = wrapper
+
+        if algorithm_name is None and not has_default_implementation(rule_name):
+            default_algorithms[rule_name] = None
 
         return wrapper
     return actual_decorator
@@ -233,7 +237,7 @@ def get_implementation(rule: Union[Callable, str], algorithm: BaseAlgorithm) -> 
     >>> get_implementation("some_rule", "name") == some_rule_algo
     True
     """
-    rule_name = rule if isinstance(rule, str) else rule.__name__
+    rule_name = __get_rule_name(rule)
     algorithm_name = __get_algo_name(algorithm)
 
     if rule_name not in implementations:
@@ -278,10 +282,15 @@ def get_default_algorithm(rule: Union[Callable, str]) -> Union[BaseAlgorithm, No
     >>> get_default_algorithm(some_rule) == Algo
     True
     """
-    rule_name = rule if isinstance(rule, str) else rule.__name__
+    rule_name = __get_rule_name(rule)
     if rule_name not in default_algorithms:
         return None
     return default_algorithms[rule_name]
+
+
+def has_default_implementation(rule: Union[Callable, str]) -> bool:
+    rule_name = __get_rule_name(rule)
+    return rule_name in default_algorithms
 
 
 def get_default_implementation(rule: Union[Callable, str]) -> Callable:
@@ -317,6 +326,10 @@ def get_default_implementation(rule: Union[Callable, str]) -> Callable:
     """
     default_algorithm = get_default_algorithm(rule)
     return get_implementation(rule, default_algorithm)
+
+
+def __get_rule_name(rule):
+    return rule if isinstance(rule, str) else rule.__name__
 
 
 def __get_algo_name(algorithm):

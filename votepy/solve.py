@@ -1,7 +1,7 @@
 from typing import Callable, Iterable, Union
 from votepy.ordinal_election import OrdinalElection
 from votepy.algorithms.base_algorithm import BaseAlgorithm
-from votepy.meta.structure import get_algorithm, get_default_algorithm, get_implementation
+from votepy.meta.structure import get_algorithm, get_default_algorithm, get_implementation, has_default_implementation
 
 
 def solve(rule: Union[Callable, str], voting: Union[list[list[int]], OrdinalElection], size_of_committee: int, *rule_args, algorithm: BaseAlgorithm = None, **rule_kwargs) -> list[int]:
@@ -28,6 +28,9 @@ def solve(rule: Union[Callable, str], voting: Union[list[list[int]], OrdinalElec
     [2, 1]
     """
     if algorithm is None:
+        if not has_default_implementation(rule):
+            raise ValueError(
+                f"{rule} has no default implementation. If rule does not need any algorithm, its rule function should be additionally decorated with `@impl(rule='name', algorithm=None)`. See `@impl` docs.")
         algorithm = get_default_algorithm(rule)
 
     implementation = get_implementation(rule, algorithm)
