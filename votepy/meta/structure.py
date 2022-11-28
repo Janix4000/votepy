@@ -289,6 +289,15 @@ def get_default_algorithm(rule: Union[Callable, str]) -> Union[BaseAlgorithm, No
 
 
 def has_default_implementation(rule: Union[Callable, str]) -> bool:
+    """# Summary
+    Determines whether given rule has a default implementation (with algorithm or not).
+
+    ## Args:
+        `rule` (Callable | str): Voting rule or its identification name
+
+    ## Returns:
+        -> bool: Whether rule has default implementation, or not
+    """
     rule_name = __get_rule_name(rule)
     return rule_name in default_algorithms
 
