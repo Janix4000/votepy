@@ -20,4 +20,5 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Janix4000/votepy/",
     project_urls={"Bug Tracker": "https://github.com/Janix4000/votepy/issues"},
+    packages=['votepy', 'votepy.rules', 'votepy.algorithms', 'votepy.meta'],
 )
