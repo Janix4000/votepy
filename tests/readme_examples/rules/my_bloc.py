@@ -1,7 +1,8 @@
 # my_bloc.py
-from votepy.meta.structure import rule
+from votepy.meta.structure import rule, impl
 
 
+@impl('my_bloc', algorithm=None)
 @rule()
 def my_bloc(voting: list[list[int]], committee_size: int) -> list[int]:
     n = len(voting[0])
