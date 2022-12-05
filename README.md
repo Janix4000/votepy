@@ -123,8 +123,13 @@ committee = vp.rules.chamberlin_courant(voting, committee_size, algorithm=ILP(Gu
 
 ## Contribution guide
 
+### Installation
+
  1. Clone the repository: `git clone https://github.com/Janix4000/votepy.git && cd votepy`
  2. Create and source new virtual environment: `python3 -m venv venv && source venv/bin/activate`
  3. Install the main package: `pip3 install -e .`
  4. Install development packages: `pip3 install -r ./requirements_dev.txt`
  5. Run tests: `pytest`
+
+### Adding a new voting rule
+See the [guide](votepy/rules/README.md) for adding new voting rule.
