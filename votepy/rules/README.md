@@ -98,6 +98,8 @@ First of all, we pass the `name` of the rule. It is a bit redundant, but Python 
 
 Now we can use the `my_bloc` rule in the `votepy.solve` function.
 
+To see the final implementation of the `my_bloc` rule, see [tests/readme_examples/rules/my_bloc.py](../../tests/readme_examples/rules/my_bloc.py).
+
 ## Implementation using algorithms
 
 As mentioned earlier, some rules are NP-Hard, and finding exact solutions may be impossible (or at least very time-consuming). In such cases, we can use approximation algorithms. 
@@ -159,3 +161,5 @@ def __my_cc_brute_force(voting: OrdinalElection, committee_size: int, algorithm:
 ```
 
 The brute force needs only the scoring function of the form `(current committee, voting) -> score of the committee` to be prepared, so we could use `__cc_scoring_function`.
+
+To see the final implementation of the `my_cc` rule, see [tests/readme_examples/rules/my_cc.py](../../tests/readme_examples/rules/my_cc.py).
