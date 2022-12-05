@@ -117,13 +117,7 @@ def rule(name: str = None, default_algorithm: Union[BaseAlgorithm, str] = None):
     def actual_decorator(rule: Callable):
         @wraps(rule)
         def wrapper(voting, size_of_committee, *args, **kwargs):
-            if not isinstance(voting, OrdinalElection) and isinstance(voting, Iterable):
-                voting = OrdinalElection(voting)
-            if isinstance(voting, OrdinalElection):
-                n = voting.ballot_size
-                if size_of_committee > n or size_of_committee <= 0:
-                    raise ValueError(
-                        f"Size of committee needs to be from the range 1 to the number of all candidates.")
+            voting = __validate_voting(voting, size_of_committee)
 
             result = rule(voting, size_of_committee, *args, **kwargs)
             if isinstance(result, Iterable):
@@ -180,8 +174,9 @@ def impl(rule: Union[Callable, str], algorithm: Union[Type[BaseAlgorithm], None]
     def actual_decorator(implementation):
 
         @wraps(implementation)
-        def wrapper(*args, **kwargs):
-            return implementation(*args, **kwargs)
+        def wrapper(voting, size_of_committee, *args, **kwargs):
+            voting = __validate_voting(voting, size_of_committee)
+            return implementation(voting, size_of_committee, *args, **kwargs)
 
         rule_name = __get_rule_name(rule)
 
@@ -348,3 +343,14 @@ def __get_algo_name(algorithm):
         return algorithm
     else:
         return algorithm.name
+
+
+def __validate_voting(voting, size_of_committee: int):
+    if not isinstance(voting, OrdinalElection) and isinstance(voting, Iterable):
+        voting = OrdinalElection(voting)
+    if isinstance(voting, OrdinalElection):
+        n = voting.ballot_size
+        if size_of_committee > n or size_of_committee <= 0:
+            raise ValueError(
+                f"Size of committee needs to be from the range 1 to the number of all candidates.")
+    return voting
