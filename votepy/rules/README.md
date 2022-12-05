@@ -112,7 +112,7 @@ from votepy.algorithms import BaseAlgorithm
 
 @rule()
 def my_cc(voting: list[list[int]], committee_size: int, algorithm: BaseAlgorithm) -> list[int]:
-    return solve(chamberlin_courant, voting, committee_size, algorithm=algorithm)
+    return solve(my_cc, voting, committee_size, algorithm=algorithm)
 ```
 
 Note, that in the main rule function we don't implement any specific rule logic. It can be treated as a header of the function and can contain all necessary documentation and type hints. However, this function should return the committee chosen by the provided algorithm (which is an obligatory argument). To do so, we use the `solve()` function, which automatically finds the proper implementation for us, which we create in the next section:
