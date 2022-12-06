@@ -1,6 +1,7 @@
 from mock_integration import add, Slow, Fast
+from mock_without_rules import rule_without_implementation, rule_without_algorithm
 
-from votepy.meta.structure import implementations, get_implementation
+from votepy.meta.structure import implementations, get_implementation, has_default_implementation, get_default_algorithm
 
 import pytest
 
@@ -38,3 +39,16 @@ def test_main_function_invocation():
 
     slow = Slow(max_iterations=10)
     assert add(1, 2, algorithm=slow) == 3
+
+
+def test_rule_without_algorithm_has_default_implementation():
+    assert has_default_implementation(rule_without_algorithm)
+    assert has_default_implementation('rule_without_algorithm')
+
+    assert get_default_algorithm(rule_without_algorithm) is None
+    assert get_default_algorithm('rule_without_algorithm') is None
+
+
+def test_rule_without_implementation_has_no_default_implementation():
+    assert not has_default_implementation(rule_without_implementation)
+    assert not has_default_implementation('rule_without_implementation')
