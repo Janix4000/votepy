@@ -53,14 +53,14 @@ If you want to use different identification (string) name for your rule, simply 
 
 ```py
 # my_bloc.py
-@rule(name='own_bloc')
+@rule(name='custom_bloc_name')
 def my_bloc(voting: list[list[int]], committee_size: int) -> list[int]:
     ...
     return committee
 
 ...
 
-print('own_bloc' in vp.get_rules())  # True
+print('custom_bloc_name' in vp.get_rules())  # True
 ```
 
 However, `@rule()` is only a declaration of the voting rule. 
