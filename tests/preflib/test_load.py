@@ -35,5 +35,4 @@ def test_load_with_names():
         ],
         mapping={0: 'A', 1: 'B', 2: 'C'}
     )
-    assert os.getcwd() == ""
     assert preflib.load(os.path.join(dir_path, 'voting_with_names.txt')) == expected
