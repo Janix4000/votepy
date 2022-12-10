@@ -28,7 +28,7 @@ def load(source: str) -> OrdinalElection:
         ->OrdinalElection: Election
 
     ## Examples
-    >>> load('votepy/tests/preflib/data/voting_no_dups.txt')
+    >>> load('tests/fixtures/preflib/voting_no_dups.txt')
     [[0, 1, 2, 3], [3, 2, 1, 0], [2, 1, 3, 0]]
     """
     with open(source, 'r') as f:
