@@ -19,7 +19,7 @@ __meta_tokens = {
 
 def load(source: str) -> OrdinalElection:
     """# Summary
-    Loads voting from file in the preflib format.
+    Loads election from file in the preflib format.
 
     ## Args:
         `source` (str): Path to the file with voting
