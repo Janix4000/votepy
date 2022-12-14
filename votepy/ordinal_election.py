@@ -73,6 +73,20 @@ class OrdinalElection(list):
     def get_positions(self):
         return [ballot.get_positions() for ballot in self]
 
+    def __eq__(self, other):
+        if isinstance(other, OrdinalElection):
+            return self.mapping == other.mapping and self.__eq_raw(other)
+        elif isinstance(other, list):
+            return self.__eq_raw(other)
+        else:
+            raise ValueError(f"Cannot compare OrdinalElection with object of type {type(other)}")
+
+    def __eq_raw(self, other):
+        return list(sorted(self)) == list(sorted(other))
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
 
 if __name__ == '__main__':
     # note: temporary test
