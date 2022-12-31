@@ -249,7 +249,6 @@ def plot_data_from_jsons(filenames, save_to_file=True, name_to_save="", title=No
     plt.xlabel("Algorithm")
     plt.ylabel("Time [s]")
     fig.tight_layout()
-    # plt.show()
 
     if not save_to_file:
         plt.show()
