@@ -4,18 +4,11 @@ import matplotlib.pyplot as plt
 from scipy.stats import uniform, norm
 import numpy as np
 from numpy import pi
-from functools import cmp_to_key
-
-from votepy.rules.chamberlin_courant import chamberlin_courant_greedy
-from votepy.rules.k_borda import k_borda
-from votepy.rules.bloc import bloc
-from votepy.rules.sntv import sntv
 import json
 from time import time
 from random import shuffle
-
-
-# from greedy_monroe import greedy_monroe
+from ordinal_election import OrdinalElection
+from sklearn import datasets
 
 
 class Generator:
@@ -101,7 +94,7 @@ class Generator:
             y_voters = o2[1] + (r * np.sin(theta))
 
             candidates_list[i_samples].extend(list(zip(x_voters, y_voters)))
-            # shuffle(candidates_list[i_samples])
+            shuffle(candidates_list[i_samples])
 
             r = r2 * np.sqrt(uniform.rvs(size=(num_voters+ 1 -flip) // 2))
             theta = np.array(uniform.rvs(size=(num_voters+ 1 -flip) // 2)) * 2 * pi
@@ -110,8 +103,22 @@ class Generator:
             y_voters = o2[1] + (r * np.sin(theta))
 
             voters_list[i_samples].extend(list(zip(x_voters, y_voters)))
-            # shuffle(voters_list[i_samples])
+            shuffle(voters_list[i_samples])
         return candidates_list, voters_list
+
+    def two_half_moons(self, num_candidates, num_voters, noise = 0.15):
+        candidates_list, voters_list = [], []
+        for i_samples in range(self.num_sampling):
+            x, _ = datasets.make_moons(n_samples=num_candidates+num_voters, noise=noise)
+            x[:, 1] -= 0.25
+            x[:, 1] *= 1.8
+            x[:, 0] -= 0.5
+            x[:, 0] *= 1.8
+
+            voters_list.append([tuple(val) for val in x[:num_voters]])
+            candidates_list.append([tuple(val) for val in x[num_voters:]])
+        return candidates_list, voters_list
+
 
 
 def data_to_voting(voting_algorithm, data, size_of_committee, data_name, *rule_args):
@@ -134,11 +141,10 @@ def data_to_voting(voting_algorithm, data, size_of_committee, data_name, *rule_a
             votings[i_sample].append(
                 [mapping[(i_sample, x)] for x in sorted(candidates_list[i_sample], key=squared_dist)])
 
+    votings = [OrdinalElection(voting) for voting in votings]
     result = []
     times = []
     for i_sample, voting in enumerate(votings):
-        # if i_sample % 10 == 0:
-        #     print(i_sample)
         start_time = time()
         voting_results = voting_algorithm(voting, size_of_committee, *rule_args)
         end_time = time()
@@ -157,70 +163,32 @@ class Visualizator:
         self.votings_results = votings_results
         self.data = data
 
-    def visualize_results(self, save_to_file=False, name="None", title=""):
+    def visualize_results(self, save_to_file=False, name="None", title="", figsize=(8, 8)):
         xs_winners, ys_winners = [], []
-        # xs_voters, ys_voters = [], []
-        # xs_candidates, ys_candidates = [], []
 
-        voters, candidates = self.data
-
-        def alpha_parameter(k=0.7):
-            size = np.product(np.array(voters).shape) + np.product(np.array(candidates).shape) + np.product(
-                self.votings_results.shape)
-            return k / min(1.4, np.log10(size) + 0.1)
-
-        fig = plt.figure(figsize=(8, 8), dpi=80)
-
-
-        # for x in voters:
-        #     for q in x:
-        #         xs_voters.append(q[0])
-        #         ys_voters.append(q[1])
-        # plt.scatter(xs_voters, ys_voters, color=(0.9, 0.9, 0.9), s=3, alpha=alpha_parameter() / 10, zorder=0)
-        #
-        # for x in candidates:
-        #     for q in x:
-        #         xs_candidates.append(q[0])
-        #         ys_candidates.append(q[1])
-        # plt.scatter(xs_candidates, ys_candidates, color=(0.85, 0.85, 0.85), s=3, alpha=alpha_parameter() / 10, zorder=0)
+        fig = plt.figure(figsize=figsize, dpi=80)
 
         for voting_result in self.votings_results:
             for p in voting_result:
                 xs_winners.append(p[0])
                 ys_winners.append(p[1])
-        plt.scatter(xs_winners, ys_winners, color=(0.25, 0.25, 0.25), s=5, alpha=0.08, zorder=1)
-        min_x, max_x = min(xs_winners), max(xs_winners)
-        min_y, max_y = min(ys_winners), max(ys_winners)
+        plt.scatter(xs_winners, ys_winners, color=(0.25, 0.25, 0.25), s=5, alpha=0.02, zorder=1)
 
-        xs_winners.sort()
-        xs_winners.sort()
+        plt.xlim([-3, 3])
+        plt.ylim([-3, 3])
 
-        deviation_min_xs = np.mean(xs_winners[:(len(xs_winners) // 100)])
-        deviation_min_ys = np.mean(xs_winners[:(len(xs_winners) // 100)])
-
-
-        deviation_max_xs = np.mean(xs_winners[(-len(xs_winners) // 100):])
-        deviation_max_ys = np.mean(xs_winners[(-len(xs_winners) // 100):])
-
-        final_xs_deviation = max(abs(-deviation_min_xs), abs(deviation_max_xs))
-        final_ys_deviation = max(abs(-deviation_min_ys), abs(deviation_max_ys))
-
-
-        plt.xlim([min_x - 0.05*(final_xs_deviation), max_x + 0.05*(final_xs_deviation)])
-        plt.ylim([min_y - 0.05*(final_ys_deviation), max_y + 0.05*(final_ys_deviation)])
-        # plt.legend(["Voters", "Not chosen candidates", "chosen candidates"], framealpha=1, loc=(0, -0.3))
         plt.tick_params(
-            axis='both',  # changes apply to the x-axis
-            which='both',  # both major and minor ticks are affected
-            bottom=False,  # ticks along the bottom edge are off
-            top=False,  # ticks along the top edge are off
+            axis='both',
+            which='both',
+            bottom=False,
+            top=False,
             left=False,
             right=False,
             labeltop=False,
             labelright=False,
             labelleft=False,
-            labelbottom=False)  # labels along the bottom edge are off
-        plt.title(title)
+            labelbottom=False)
+        plt.title(title, fontsize = 24)
         fig.tight_layout()
 
         if not save_to_file:
@@ -231,50 +199,7 @@ class Visualizator:
             plt.cla()
             plt.close()
 
-    def visualize_all(self, save_to_file=False, name="None", title=""):
-        xs_winners, ys_winners = [], []
-        xs_voters, ys_voters = [], []
-        xs_candidates, ys_candidates = [], []
-
-        voters, candidates = self.data
-
-        def alpha_parameter(k=0.7):
-            size = np.product(np.array(voters).shape) + np.product(np.array(candidates).shape) + np.product(
-                self.votings_results.shape)
-            return k / min(1.4, np.log10(size) + 0.1)
-
-        fig = plt.figure(figsize=(8, 8), dpi=80)
-
-        for x in voters:
-            for q in x:
-                xs_voters.append(q[0])
-                ys_voters.append(q[1])
-        plt.scatter(xs_voters, ys_voters, color=(0.9, 0.9, 0.9), s=3, alpha=alpha_parameter() / 10, zorder=0)
-
-        for x in candidates:
-            for q in x:
-                xs_candidates.append(q[0])
-                ys_candidates.append(q[1])
-        plt.scatter(xs_candidates, ys_candidates, color=(0.85, 0.85, 0.85), s=3, alpha=alpha_parameter() / 10, zorder=0)
-
-        # for voting_result in self.votings_results:
-        #     for p in voting_result:
-        #         xs_winners.append(p[0])
-        #         ys_winners.append(p[1])
-        # plt.scatter(xs_winners, ys_winners, color=(0.25, 0.25, 0.25), s=3, alpha=0.08, zorder=1)
-        plt.legend(["Voters", "candidates"], framealpha=1, loc=(0, -0.3))
-        plt.title(title)
-        fig.tight_layout()
-
-        if not save_to_file:
-            plt.show()
-        else:
-            plt.savefig(name)
-            plt.clf()
-            plt.cla()
-            plt.close()
-
-    def results_to_distribution_plot(self, save_to_file=False, name="None", title=""):
+    def results_to_distribution_plot(self, save_to_file=False, name="", title=""):
         split = 120
         color_intensity = [[0 for _ in range(split)] for _ in range(split)]
         num_of_samples = len(self.votings_results) * len(self.votings_results[0])
@@ -290,11 +215,6 @@ class Visualizator:
         fig.tight_layout()
         eps = 0.0002
 
-        print(num_of_samples)
-        print(np.max(color_intensity))
-        print(np.max(color_intensity)/(num_of_samples*eps))
-        print(np.argmax(color_intensity))
-
         for i in range(split):
             for j in range(split):
                 color_intensity[i][j] = color_intensity[i][j] * np.arctan(color_intensity[i][j]/(eps * num_of_samples))
@@ -308,11 +228,35 @@ class Visualizator:
             plt.cla()
             plt.close()
 
+def load_data_from_json(filename):
+    with open(filename, "r") as fp:
+        return json.load(fp)
 
-if __name__ == "__main__":
-    generator = Generator(num_sampling=1000)
-    data = generator.uniform_rectangle(250, 200, a=3, b=3)
+def plot_data_from_jsons(filenames, save_to_file=True, name_to_save="", title=None):
+    times = []
+    names = []
+    errors = []
+    fun_name_to_repr_name= {"k_borda": "K-Borda", "greedy_monroe": "Greedy Monroe", "bloc": "Bloc", "sntv": "SNTV", "chamberlin_courant_p_algorithm" : "CC P-Algorithm", 'owa_harmonic': "OWA Harmonic", "owa_geometric_progression": "OWA Geometric Progression", "owa_arithmetic_progression": "OWA Arithmetic Progression"}
+    for (filename, name) in filenames:
+        data = load_data_from_json(filename)
+        times.append(float(data["mean_time"]))
+        errors.append(float(data["std_time"]))
+        names.append(fun_name_to_repr_name[name])
 
-    results = data_to_voting(bloc, data, size_of_committee=15)
-    vis = Visualizator(results, data)
-    vis.visualize_all()
+    fig = plt.figure(figsize=(8, 8), dpi=80)
+    plt.bar(names, times)
+    plt.errorbar(names, times, yerr=errors, fmt="o", color = "red")
+    plt.title(title, fontsize=24)
+    plt.xlabel("Algorithm")
+    plt.ylabel("Time [s]")
+    fig.tight_layout()
+    # plt.show()
+
+    if not save_to_file:
+        plt.show()
+    else:
+        plt.savefig(name_to_save)
+        plt.clf()
+        plt.cla()
+        plt.close()
+
