@@ -7,7 +7,7 @@ from numpy import pi
 import json
 from time import time
 from random import shuffle
-from ordinal_election import OrdinalElection
+from votepy.ordinal_election import OrdinalElection
 from sklearn import datasets
 
 class Generator:
