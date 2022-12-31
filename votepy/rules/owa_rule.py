@@ -1,11 +1,11 @@
 from typing import Type, Union
 from votepy.ordinal_election import OrdinalElection
 from votepy.generic_ilp import CPLEX, Gurobi
-from votepy.rules.chamberlin_courant import chamberlin_courant
-from votepy.rules.k_borda import k_borda
+from votepy.rules.chamberlin_courant_rule import chamberlin_courant
+from votepy.rules.k_borda_rule import k_borda
 from votepy.meta.structure import algo, rule, impl
 from votepy.solve import solve
-from votepy.algorithms.base_ilp import ILP
+from votepy.algorithms.ilp import ILP
 from votepy.generic_ilp import Solver
 
 import numpy as np
@@ -23,7 +23,7 @@ def owa(voting: Union[OrdinalElection,
     """# Summary
     OWA rule
     ## Args:
-        `voting` (`OrdinalElection | list[int]`): Voting for which the function calculates the committee
+        `voting` (`list[list[int]]` | `OrdinalElection`): Voting for which the function calculates the committee
         `size_of_committee` (`int`): Size of the committee
         `owa_vector` (`list[float]`): Vector of weights as defined in the OWA rule
         `algorithm` (`BaseAlgorithm`): Algorithm to use
@@ -42,7 +42,7 @@ def owa(voting: Union[OrdinalElection,
 
 
 @impl(owa, ILP)
-def owa_ilp(voting: Union[OrdinalElection, list[list[int]]],
+def owa_ilp(voting: Union[list[list[int]], OrdinalElection],
             size_of_committee: int,
             owa_vector: list[float],
             algorithm: OWA = OWA()):
@@ -50,7 +50,7 @@ def owa_ilp(voting: Union[OrdinalElection, list[list[int]]],
     ILP implementation of the OWA rule as described by:
     Piotr Skowron, Piotr Faliszewski, Jerome Lang
     Finding a Collective Set of Items: From Proportional Multirepresentation to Group Recommendation
-	arXiv:1402.3044
+        arXiv:1402.3044
 
     Variables are named exactly as in the paper, to make cross-checking easier.
     """
@@ -118,13 +118,13 @@ def owa_ilp(voting: Union[OrdinalElection, list[list[int]]],
 
 @impl('owa_k_median', algorithm=OWA)
 @rule()
-def owa_k_median(voting: Union[OrdinalElection, list[list[int]]], size_of_committee: int, k: int, algorithm: OWA = OWA()):
+def owa_k_median(voting: Union[list[list[int]], OrdinalElection], size_of_committee: int, k: int, algorithm: OWA = OWA()):
     """# Calculates committee using owa_ilp with owa_vector set to k-1 zeros, single one and followed by size_of_committee - k zeros
 
     ### Args:
-        `voting` (OrdinalElection | list[list[int]]): Voting for which the function calculates the committee
-        `size_of_committee` (int): Size of the committee
-        `k` (int): Parameter describing how many zeros precide and follow single one weight in owa_vector
+        `voting` (`list[list[int]]` | `OrdinalElection`): Voting for which the function calculates the committee
+        `size_of_committee` (`int`): Size of the committee
+        `k` (`int`): Parameter describing how many zeros precide and follow single one weight in owa_vector
         `algorithm` (`BaseAlgorithm`): algorithm used to calculate owa rule
 
     ### Returns:
@@ -157,9 +157,9 @@ def owa_k_best(voting, size_of_committee, k, algorithm: OWA = OWA()):
     """# Calculates committee using owa_ilp with owa_vector set to k ones and size_of_committee - k zeros
 
     ### Args:
-        voting (OrdinalElection | list[list[int]]): Voting for which the function calculates the committee
-        size_of_committee (int): Size of the committee
-        k (int): Parameter describing how many ones are at the beginning of owa_vector
+        voting (`list[list[int]]` | `OrdinalElection`): Voting for which the function calculates the committee
+        size_of_committee (`int`): Size of the committee
+        k (`int`): Parameter describing how many ones are at the beginning of owa_vector
         algorithm (`BaseAlgorithm`): algorithm used to calculate owa rule
 
     ### Returns:
@@ -191,9 +191,9 @@ def owa_arithmetic_progression(voting, size_of_committee, a, algorithm: OWA = OW
     """# Calculates committee using arithmetic progression in owa_vector weights
 
     ### Args:
-        voting (OrdinalElection | list[list[int]]): Voting for which the function calculates the committee
-        size_of_committee (int): Size of the committee
-        a (int): Free expression of arithmetic progression
+        voting (`list[list[int]]` | `OrdinalElection`): Voting for which the function calculates the committee
+        size_of_committee (`int`): Size of the committee
+        a (`int`): Free expression of arithmetic progression
         algorithm (`BaseAlgorithm`): algorithm used to calculate owa rule
 
     ### Returns:
@@ -225,9 +225,9 @@ def owa_geometric_progression(voting, size_of_committee, p, algorithm: OWA = OWA
     """# Calculates committee using owa_geometric_progression in owa_vector weights
 
     ### Args:
-        voting (OrdinalElection | list[list[int]]): Voting for which the function calculates the committee
-        size_of_committee (int): Size of the committee
-        p (int): Common ratio of geometric progression
+        voting (`list[list[int]]` | `OrdinalElection`): Voting for which the function calculates the committee
+        size_of_committee (`int`): Size of the committee
+        p (`int`): Common ratio of geometric progression
         algorithm (`BaseAlgorithm`): algorithm used to calculate owa rule
 
     ### Returns:
@@ -259,8 +259,8 @@ def owa_harmonic(voting, size_of_committee, algorithm: OWA = OWA()):
     """# Calculates committee using harmonic series in owa_vector weights
 
     ### Args:
-        voting (OrdinalElection | list[list[int]]): Voting for which the function calculates the committee
-        size_of_committee (int): Size of the committee
+        voting (`list[list[int]]` | `OrdinalElection`): Voting for which the function calculates the committee
+        size_of_committee (`int`): Size of the committee
         algorithm (`BaseAlgorithm`): algorithm used to calculate owa rule
 
     ### Returns:
@@ -315,6 +315,7 @@ def owa_hurwicz(voting, size_of_committee, p, algorithm: OWA = OWA()):
             f"Expected p to be in range 0 to 1, got: {p}")
     owa_vector = [p] + [0] * (size_of_committee - 2) + [1 - p]
     return owa_ilp(voting, size_of_committee, owa_vector, algorithm)
+
 
 if __name__ == '__main__':
     voting = [[0, 1, 2, 4, 5, 3], [0, 1, 2, 4, 5, 3], [0, 1, 2, 4, 5, 3],

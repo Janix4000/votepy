@@ -10,7 +10,6 @@ from random import shuffle
 from ordinal_election import OrdinalElection
 from sklearn import datasets
 
-
 class Generator:
     def __init__(self, num_sampling=100):
         self.num_sampling = num_sampling

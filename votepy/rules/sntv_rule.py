@@ -7,17 +7,17 @@ import numpy as np
 
 @impl('sntv', algorithm=None)
 @rule()
-def sntv(voting: Union[OrdinalElection, list[int]], size_of_committee: int) -> list[int]:
+def sntv(voting: Union[list[list[int]], OrdinalElection], size_of_committee: int) -> list[int]:
     """# Summary
     Function computes a committee of given size using SNTV rule for specified number of scored candidates.
     In this version for multiple results only arbitrary one is returned.
 
     ## Args:
-        voting (OrdinalElection): voting for which the function calculates the committee
-        size_of_committee (int): Size of the committee
+        voting (`list[list[int]]` | `OrdinalElection`): voting for which the function calculates the committee
+        size_of_committee (`int`): Size of the committee
 
     Returns:
-        list[int]: List of chosen candidates
+        `list[int]`: List of chosen candidates
 
     ## Examples
         >>> import votepy as vp

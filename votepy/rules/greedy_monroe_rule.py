@@ -7,23 +7,20 @@ from votepy.solve import solve
 
 @impl('greedy_monroe', algorithm=None)
 @rule()
-def greedy_monroe(voting: Union[OrdinalElection, list[int]], size_of_committee: int) -> \
+def greedy_monroe(voting: Union[list[list[int]], OrdinalElection], size_of_committee: int) -> \
         list[int]:
-    """Function computes a committee of given size using greedy monroe procedure.
+    """# Summary
+    Function computes a committee of given size using greedy monroe procedure.
     In this version for multiple results only arbitrary one is returned.
 
-    Args:
-        voting (OrdinalElection): voting for which the function calculates the committee
-        size_of_committee (int): Size of the committee
+    ## Args:
+        voting (`list[list[int]]` | `OrdinalElection`): voting for which the function calculates the committee
+        size_of_committee (`int`): Size of the committee
 
-    Raises:
-        ValueError: Size of committee is a positive number which does not exceed number of all candidates
-        ValueError: Number of candidates scored in k-borda is a positive number which does not exceed number of all candidates
+    ## Returns:
+        `list[int]`: List of chosen candidates
 
-    Returns:
-        OrdinalBallot: List of chosen candidates wrapped in ordinalBallot
-
-    Examples:
+    ## Examples:
     >>> voting = [
     ...     [1, 0, 2, 3, 4],
     ...     [3, 2, 4, 1, 0],
@@ -35,8 +32,6 @@ def greedy_monroe(voting: Union[OrdinalElection, list[int]], size_of_committee: 
     """
     m_candidates = voting.ballot_size
     n_votes = len(voting)
-    if size_of_committee > m_candidates or size_of_committee <= 0:
-        raise ValueError(f"Size of committee needs to be from the range 1 to the number of all candidates.")
     resultant_committee = []
 
     def map_votes(vs):

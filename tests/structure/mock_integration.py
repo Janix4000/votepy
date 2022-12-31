@@ -46,8 +46,8 @@ def add(x: int, y: int, algorithm: BaseAlgorithm = Fast()) -> int:
     Add two numbers
 
     ## Args:
-        `x` (int): First number to add
-        `y` (int): Second number to add
+        `x` (`int`): First number to add
+        `y` (`int`): Second number to add
 
     ## Returns:
         -> int: Sum of two numbers

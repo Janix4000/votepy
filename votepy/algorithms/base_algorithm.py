@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, final
 from votepy.ordinal_election import OrdinalElection
 
 from abc import abstractmethod, ABC
@@ -17,17 +17,16 @@ class BaseAlgorithm(ABC):
     def _solve(self, voting: OrdinalElection, size_of_committee: int) -> list[int]:
         pass
 
-    def solve(self, voting: Union[OrdinalElection, list[list[int]]], size_of_committee: int) -> list[int]:
-        """Solves a voting using the specified algorithm, which must be fully prepared for the election rule. It assures all runtime checks.
+    @final
+    def solve(self, voting: Union[list[list[int]], OrdinalElection], size_of_committee: int) -> list[int]:
+        """# Summary
+        Solves a voting using the specified algorithm, which must be fully prepared for the election rule.
 
-        Args:
-            `voting` (`OrdinalElection`): Voting for which the algorithm calculates the committee
+        ## Args:
+            `voting` (`list[list[int]], OrdinalElection`): Voting for which the algorithm calculates the committee
             `size_of_committee` (`int`): Size of the committee
 
-        Raises:
-            ValueError: Size of committee needs to be from the range 1 to the number of all candidates.
-
-        Returns:
+        ## Returns:
             `list[int]`: The winning committee
         """
         if not self.__prepared:
